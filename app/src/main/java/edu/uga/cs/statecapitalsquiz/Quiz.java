@@ -57,6 +57,16 @@ public class Quiz {
         this.id = id;
     }
 
+    public String getDate()
+    {
+        return date;
+    }
+
+    public void setId(String date)
+    {
+        this.date = date;
+    }
+
     public long getQuestion1()
     {
         return question_1;

@@ -9,7 +9,7 @@ public class QuizzesDBHelper extends SQLiteOpenHelper {
 
     private static final String DEBUG_TAG = "QuestionsDBHelper";
 
-    private static final String DB_NAME = "questions.db";
+    private static final String DB_NAME = "quizzes.db";
     private static final int DB_VERSION = 1;
 
     // Define all names (strings) for table and column names.
