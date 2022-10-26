@@ -15,7 +15,7 @@ public class QuestionsDBHelper extends SQLiteOpenHelper {
     // Define all names (strings) for table and column names.
     // This will be useful if we want to change these names later.
     public static final String TABLE_QUESTIONS = "questions";
-    public static final String QUESTIONS_COLUMN_ID = "questionID";
+    public static final String QUESTIONS_COLUMN_ID = "id";
     public static final String QUESTIONS_COLUMN_STATENAME = "stateName";
     public static final String QUESTIONS_COLUMN_CAPITALCITY = "capitalCity";
     public static final String QUESTIONS_COLUMN_SECONDCITY = "secondCity";

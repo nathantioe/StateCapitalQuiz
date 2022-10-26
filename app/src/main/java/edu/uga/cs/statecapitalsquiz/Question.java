@@ -8,7 +8,7 @@ package edu.uga.cs.statecapitalsquiz;
  */
 public class Question {
 
-    private long   questionID;
+    private long   id;
     private String stateName;
     private String capitalCity;
     private String secondCity;
@@ -16,7 +16,7 @@ public class Question {
 
     public Question()
     {
-        this.questionID = -1;
+        this.id = -1;
         this.stateName = null;
         this.capitalCity = null;
         this.secondCity = null;
@@ -24,21 +24,21 @@ public class Question {
     }
 
     public Question( String stateName, String capitalCity, String secondCity, String thirdCity ) {
-        this.questionID = -1;  // the primary key id will be set by a setter method
+        this.id = -1;  // the primary key id will be set by a setter method
         this.stateName = stateName;
         this.capitalCity = capitalCity;
         this.secondCity = secondCity;
         this.thirdCity = thirdCity;
     }
 
-    public long getQuestionIDId()
+    public long getId()
     {
-        return questionID;
+        return id;
     }
 
-    public void setQuestionID(long id)
+    public void setId(long id)
     {
-        this.questionID = id;
+        this.id = id;
     }
 
     public String getStateName()
@@ -83,6 +83,6 @@ public class Question {
 
     public String toString()
     {
-        return questionID + ": " + stateName + " " + capitalCity + " " + secondCity + " " + thirdCity;
+        return id + ": " + stateName + " " + capitalCity + " " + secondCity + " " + thirdCity;
     }
 }
