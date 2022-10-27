@@ -3,6 +3,7 @@ package edu.uga.cs.statecapitalsquiz;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -74,7 +75,7 @@ public class QuizDoneFragment extends Fragment {
         System.out.println(dtf.format(now));
         String time = dtf.format(now);
 
-        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+        //results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
 
         Button newQuiz = view.findViewById( R.id.button4 );
 

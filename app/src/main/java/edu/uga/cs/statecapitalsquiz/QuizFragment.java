@@ -16,6 +16,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import org.w3c.dom.Text;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 public class QuizFragment extends Fragment {
@@ -64,11 +68,16 @@ public class QuizFragment extends Fragment {
 
     public void updateScore(){
         int localScore = 0;
+        //Log.d("answers", Arrays.toString(QuizPagerAdapter.answers));
+        //Log.d("rightanswers", Arrays.toString(rightAnswers));
+
+
         for (int i=0;i<6;i++){
             if (QuizPagerAdapter.answers[i] == rightAnswers[i] ){
                 localScore++;
             }
         }
+        //Log.d("updatescore", Integer.toString(localScore));
         QuizPagerAdapter.score = localScore;
     }
 
@@ -92,28 +101,44 @@ public class QuizFragment extends Fragment {
         radioButton3.setText( statesAndCapitals [ (whichState * 4) + 3] );
 
         updateScore();
+        //Log.d("whichstate", Integer.toString(whichState));
+
 
         RadioGroup radioGroup = (RadioGroup) view.findViewById( R.id.radioGroup );
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                updateScore();
 
                 if (i == 2131231209){
                     QuizPagerAdapter.answers[whichState] = 1;
                     if (answers != null) {
-                        Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
+                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
                     }
                 } else if (i == 2131231210){
                     QuizPagerAdapter.answers[whichState] = 2;
                     if (answers != null) {
-                        Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
+                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
                     }
                 } else if (i == 2131231211){
                     QuizPagerAdapter.answers[whichState] = 3;
                     if (answers != null) {
-                        Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
+                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
                     }
+                }
+
+                updateScore();
+                //Log.d("whichstate", Integer.toString(whichState));
+                if (whichState > 0){
+                    TextView results = (TextView)getActivity().findViewById(R.id.results);
+
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    System.out.println(dtf.format(now));
+                    String time = dtf.format(now);
+
+                    results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+                    //Log.d("quizpageadapterscore", Integer.toString(QuizPagerAdapter.score));
+                    //Log.d("checkedchangeSettext", (String) results.getText());
                 }
             }
         });

@@ -75,6 +75,7 @@ public class QuizFragmentContainer extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
 
         pager = view.findViewById( R.id.viewPager );
+        pager.setOffscreenPageLimit(8);
         qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
         pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
         pager.setAdapter( qAdapter );

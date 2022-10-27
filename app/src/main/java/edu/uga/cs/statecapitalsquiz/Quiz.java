@@ -37,6 +37,7 @@ public class Quiz {
                  long question_4, long question_5, long question_6,
                  long result, long questions_answered) {
         this.id = -1;  // the primary key id will be set by a setter method
+        this.date = date;
         this.question_1 = question_1;
         this.question_2 = question_2;
         this.question_3 = question_3;
