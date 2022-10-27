@@ -7,12 +7,20 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import com.opencsv.CSVReader;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String DEBUG_TAG = "MainActivity";
+    QuestionsData questionsData = null;
+    List<Question> allQuestions = null;
     //QuizzesData quizzesData = null;
 
     // Note: Feel free to ignore/delete comments. I just wrote it to test creating the databases
@@ -21,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        questionsData = new QuestionsData(getApplicationContext());
+        readFromCSV();
 
 
     }
@@ -50,6 +58,34 @@ public class MainActivity extends AppCompatActivity {
         //pager.setAdapter( qAdapter );
     }
 
+    public void readFromCSV() {
+        try {
+            // Open the CSV data file in the assets folder
+            InputStream in_s = getAssets().open( "state_capitals.csv" );
+            if(questionsData != null) {
+               questionsData.open();
+            }
+
+            // read the CSV data
+            CSVReader reader = new CSVReader( new InputStreamReader( in_s ) );
+            reader.skip(1);
+            String[] nextRow;
+            // nextRow[] is an array of values from the line
+            while( ( nextRow = reader.readNext() ) != null ) {
+                questionsData.storeQuestion(nextRow[0], nextRow[1], nextRow[2], nextRow[3]);
+            }
+
+            allQuestions = questionsData.retrieveAllQuestions();
+
+            if(questionsData != null) {
+                questionsData.close();
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
     class ButtonClickListener implements View.OnClickListener {
 
         @Override
@@ -63,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //quizzesData = new QuizzesData(getApplicationContext());
     }
-
+//
 //    @Override
 //    protected void onResume() {
 //        super.onResume();
