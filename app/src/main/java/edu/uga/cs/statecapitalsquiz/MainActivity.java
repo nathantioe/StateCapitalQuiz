@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String DEBUG_TAG = "MainActivity";
     QuestionsData questionsData = null;
+    QuizzesData quizzesData = null;
     List<Question> allQuestions = null;
-    //QuizzesData quizzesData = null;
 
     // Note: Feel free to ignore/delete comments. I just wrote it to test creating the databases
 
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         questionsData = new QuestionsData(getApplicationContext());
+        quizzesData = new QuizzesData(getApplicationContext());
         readFromCSV();
 
 
@@ -62,20 +63,24 @@ public class MainActivity extends AppCompatActivity {
         try {
             // Open the CSV data file in the assets folder
             InputStream in_s = getAssets().open( "state_capitals.csv" );
+
+            // TODO: check if database exists, if so don't reload CSV values into db
             if(questionsData != null) {
                questionsData.open();
-            }
 
+            }
             // read the CSV data
             CSVReader reader = new CSVReader( new InputStreamReader( in_s ) );
-            reader.skip(1);
-            String[] nextRow;
-            // nextRow[] is an array of values from the line
+            reader.skip(1); // skip first line of csv since it contains the header
+            String[] nextRow; // nextRow[] is an array of values from the line
+
+            // TODO: make AsyncTask to store in database
             while( ( nextRow = reader.readNext() ) != null ) {
                 questionsData.storeQuestion(nextRow[0], nextRow[1], nextRow[2], nextRow[3]);
             }
 
-            allQuestions = questionsData.retrieveAllQuestions();
+            allQuestions = questionsData.retrieveAllQuestions(); // for now getting all the questions from db
+            // TODO: make function to get 6 questions and shuffle answers?
 
             if(questionsData != null) {
                 questionsData.close();
@@ -97,22 +102,5 @@ public class MainActivity extends AppCompatActivity {
                 //
             }
         }
-        //quizzesData = new QuizzesData(getApplicationContext());
     }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if( quizzesData != null ) {
-//            quizzesData.open();
-//        }
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        if (quizzesData != null) {
-//            quizzesData.close();
-//        }
-//    }
 }

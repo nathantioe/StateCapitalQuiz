@@ -19,34 +19,35 @@ public class QuizzesData {
 
     // this is a reference to our database; it is used later to run SQL commands
     private SQLiteDatabase db;
-    private SQLiteOpenHelper quizzesDbHelper;
+    private SQLiteOpenHelper dbHelper;
+
     private static final String[] allColumns = {
-            QuizzesDBHelper.QUIZZES_COLUMN_ID,
-            QuizzesDBHelper.QUIZZES_COLUMN_DATE,
-            QuizzesDBHelper.QUIZZES_COLUMN_QUESTION1,
-            QuizzesDBHelper.QUIZZES_COLUMN_QUESTION2,
-            QuizzesDBHelper.QUIZZES_COLUMN_QUESTION3,
-            QuizzesDBHelper.QUIZZES_COLUMN_QUESTION4,
-            QuizzesDBHelper.QUIZZES_COLUMN_QUESTION5,
-            QuizzesDBHelper.QUIZZES_COLUMN_QUESTION6,
-            QuizzesDBHelper.QUIZZES_COLUMN_RESULT,
-            QuizzesDBHelper.QUIZZES_COLUMN_QUESTIONSANSWERED
+            DBHelper.QUIZZES_COLUMN_ID,
+            DBHelper.QUIZZES_COLUMN_DATE,
+            DBHelper.QUIZZES_COLUMN_QUESTION1,
+            DBHelper.QUIZZES_COLUMN_QUESTION2,
+            DBHelper.QUIZZES_COLUMN_QUESTION3,
+            DBHelper.QUIZZES_COLUMN_QUESTION4,
+            DBHelper.QUIZZES_COLUMN_QUESTION5,
+            DBHelper.QUIZZES_COLUMN_QUESTION6,
+            DBHelper.QUIZZES_COLUMN_RESULT,
+            DBHelper.QUIZZES_COLUMN_QUESTIONSANSWERED
     };
 
     public QuizzesData( Context context ) {
-        this.quizzesDbHelper = QuizzesDBHelper.getInstance( context );
+        this.dbHelper = DBHelper.getInstance( context );
     }
 
     // Open the database
     public void open() {
-        db = quizzesDbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
         Log.d( DEBUG_TAG, "QuizzesData: db open" );
     }
 
     // Close the database
     public void close() {
-        if( quizzesDbHelper != null ) {
-            quizzesDbHelper.close();
+        if( dbHelper != null ) {
+            dbHelper.close();
             Log.d(DEBUG_TAG, "QuizzesData: db closed");
         }
     }
@@ -66,7 +67,7 @@ public class QuizzesData {
 
         try {
             // Execute the select query and get the Cursor to iterate over the retrieved rows
-            cursor = db.query( QuizzesDBHelper.TABLE_QUIZZES, allColumns,
+            cursor = db.query( DBHelper.TABLE_QUIZZES, allColumns,
                     null, null, null, null, null );
 
             // collect all quizzes into a List
@@ -77,25 +78,25 @@ public class QuizzesData {
                     if( cursor.getColumnCount() >= 10) {
 
                         // get all attribute values of this quiz
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_ID);
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_ID);
                         long id = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_DATE );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_DATE );
                         String date = cursor.getString( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION1 );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_QUESTION1 );
                         long q1 = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION2 );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_QUESTION2 );
                         long q2 = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION3 );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_QUESTION3 );
                         long q3 = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION4 );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_QUESTION4 );
                         long q4 = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION5 );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_QUESTION5 );
                         long q5 = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION6 );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_QUESTION6 );
                         long q6 = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_RESULT );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_RESULT );
                         long result = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuizzesDBHelper.QUIZZES_COLUMN_QUESTIONSANSWERED );
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUIZZES_COLUMN_QUESTIONSANSWERED );
                         long questionsAnswered = cursor.getLong( columnIndex );
 
                         // create a new quiz object and set its state to the retrieved values
@@ -133,22 +134,22 @@ public class QuizzesData {
         // This is how we are providing persistence to a Quiz (Java object) instance
         // by storing it as a new row in the database table representing quizzes.
         ContentValues values = new ContentValues();
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_DATE, quiz.getDate());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION1, quiz.getQuestion1());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION2, quiz.getQuestion2());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION3, quiz.getQuestion3());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION4, quiz.getQuestion4());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION5, quiz.getQuestion5());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_QUESTION6, quiz.getQuestion6());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_RESULT, quiz.getResult());
-        values.put( QuizzesDBHelper.QUIZZES_COLUMN_QUESTIONSANSWERED, quiz.getQuestionsAnswered());
+        values.put( DBHelper.QUIZZES_COLUMN_DATE, quiz.getDate());
+        values.put( DBHelper.QUIZZES_COLUMN_QUESTION1, quiz.getQuestion1());
+        values.put( DBHelper.QUIZZES_COLUMN_QUESTION2, quiz.getQuestion2());
+        values.put( DBHelper.QUIZZES_COLUMN_QUESTION3, quiz.getQuestion3());
+        values.put( DBHelper.QUIZZES_COLUMN_QUESTION4, quiz.getQuestion4());
+        values.put( DBHelper.QUIZZES_COLUMN_QUESTION5, quiz.getQuestion5());
+        values.put( DBHelper.QUIZZES_COLUMN_QUESTION6, quiz.getQuestion6());
+        values.put( DBHelper.QUIZZES_COLUMN_RESULT, quiz.getResult());
+        values.put( DBHelper.QUIZZES_COLUMN_QUESTIONSANSWERED, quiz.getQuestionsAnswered());
 
         // Insert the new row into the database table;
         // The id (primary key) is automatically generated by the database system
         // and returned as from the insert method call.
-        long id = db.insert( QuizzesDBHelper.TABLE_QUIZZES, null, values );
+        long id = db.insert( DBHelper.TABLE_QUIZZES, null, values );
 
-        // store the id (the primary key) in the JobLead instance, as it is now persistent
+        // store the id (the primary key) in the quiz instance, as it is now persistent
         quiz.setId( id );
 
         Log.d( DEBUG_TAG, "Stored new quiz with id: " + String.valueOf( quiz.getId() ) );

@@ -5,15 +5,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class QuestionsDBHelper extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DEBUG_TAG = "QuestionsDBHelper";
 
-    private static final String DB_NAME = "questions.db";
+    private static final String DB_NAME = "data.db";
     private static final int DB_VERSION = 1;
 
-    // Define all names (strings) for table and column names.
-    // This will be useful if we want to change these names later.
+    // Questions
     public static final String TABLE_QUESTIONS = "questions";
     public static final String QUESTIONS_COLUMN_ID = "id";
     public static final String QUESTIONS_COLUMN_STATENAME = "stateName";
@@ -21,8 +20,21 @@ public class QuestionsDBHelper extends SQLiteOpenHelper {
     public static final String QUESTIONS_COLUMN_SECONDCITY = "secondCity";
     public static final String QUESTIONS_COLUMN_THIRDCITY = "thirdCity";
 
+    // Quizzes
+    public static final String TABLE_QUIZZES = "quizzes";
+    public static final String QUIZZES_COLUMN_ID = "id";
+    public static final String QUIZZES_COLUMN_DATE = "date";
+    public static final String QUIZZES_COLUMN_QUESTION1 = "question_1";
+    public static final String QUIZZES_COLUMN_QUESTION2 = "question_2";
+    public static final String QUIZZES_COLUMN_QUESTION3 = "question_3";
+    public static final String QUIZZES_COLUMN_QUESTION4 = "question_4";
+    public static final String QUIZZES_COLUMN_QUESTION5 = "question_5";
+    public static final String QUIZZES_COLUMN_QUESTION6 = "question_6";
+    public static final String QUIZZES_COLUMN_RESULT = "result";
+    public static final String QUIZZES_COLUMN_QUESTIONSANSWERED = "questions_answered";
+
     // This is a reference to the only instance for the helper.
-    private static QuestionsDBHelper helperInstance;
+    private static DBHelper helperInstance;
 
     // A Create table SQL statement to create a table for job leads.
     // Note that _id is an auto increment primary key, i.e. the database will
@@ -36,19 +48,30 @@ public class QuestionsDBHelper extends SQLiteOpenHelper {
                     + QUESTIONS_COLUMN_THIRDCITY + " TEXT"
                     + ")";
 
-    // Note that the constructor is private!
-    // So, it can be called only from
-    // this class, in the getInstance method.
-    private QuestionsDBHelper( Context context ) {
+    private static final String CREATE_QUIZZES =
+            "create table " + TABLE_QUIZZES + " ("
+                    + QUIZZES_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + QUIZZES_COLUMN_DATE + " TEXT, "
+                    + QUIZZES_COLUMN_QUESTION1 + " INTEGER, "
+                    + QUIZZES_COLUMN_QUESTION2 + " INTEGER, "
+                    + QUIZZES_COLUMN_QUESTION3 + " INTEGER, "
+                    + QUIZZES_COLUMN_QUESTION4 + " INTEGER, "
+                    + QUIZZES_COLUMN_QUESTION5 + " INTEGER, "
+                    + QUIZZES_COLUMN_QUESTION6 + " INTEGER, "
+                    + QUIZZES_COLUMN_RESULT + " INTEGER, "
+                    + QUIZZES_COLUMN_QUESTIONSANSWERED + " INTEGER"
+                    + ")";
+
+    private DBHelper( Context context ) {
         super( context, DB_NAME, null, DB_VERSION );
     }
 
     // Access method to the single instance of the class.
     // It is synchronized, so that only one thread can executes this method, at a time.
-    public static synchronized QuestionsDBHelper getInstance( Context context ) {
+    public static synchronized DBHelper getInstance( Context context ) {
         // check if the instance already exists and if not, create the instance
         if( helperInstance == null ) {
-            helperInstance = new QuestionsDBHelper( context.getApplicationContext() );
+            helperInstance = new DBHelper( context.getApplicationContext() );
         }
         return helperInstance;
     }
@@ -57,7 +80,8 @@ public class QuestionsDBHelper extends SQLiteOpenHelper {
     // it does not exist yet.
     @Override
     public void onCreate( SQLiteDatabase db ) {
-        db.execSQL( CREATE_QUESTIONS );
+        db.execSQL(CREATE_QUESTIONS);
+        db.execSQL(CREATE_QUIZZES);
         Log.d( DEBUG_TAG, "Table " + TABLE_QUESTIONS + " created" );
     }
 
@@ -67,7 +91,9 @@ public class QuestionsDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion ) {
         db.execSQL( "drop table if exists " + TABLE_QUESTIONS );
-        onCreate( db );
+        db.execSQL( "drop table if exists " + TABLE_QUIZZES );
+        onCreate(db);
         Log.d( DEBUG_TAG, "Table " + TABLE_QUESTIONS + " upgraded" );
+        Log.d( DEBUG_TAG, "Table " + TABLE_QUIZZES + " upgraded" );
     }
 }

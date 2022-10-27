@@ -16,29 +16,29 @@ public class QuestionsData {
 
     // this is a reference to our database; it is used later to run SQL commands
     private SQLiteDatabase db;
-    private SQLiteOpenHelper questionsDbHelper;
+    private SQLiteOpenHelper dbHelper;
     private static final String[] allColumns = {
-            QuestionsDBHelper.QUESTIONS_COLUMN_ID,
-            QuestionsDBHelper.QUESTIONS_COLUMN_STATENAME,
-            QuestionsDBHelper.QUESTIONS_COLUMN_CAPITALCITY,
-            QuestionsDBHelper.QUESTIONS_COLUMN_SECONDCITY,
-            QuestionsDBHelper.QUESTIONS_COLUMN_THIRDCITY
+            DBHelper.QUESTIONS_COLUMN_ID,
+            DBHelper.QUESTIONS_COLUMN_STATENAME,
+            DBHelper.QUESTIONS_COLUMN_CAPITALCITY,
+            DBHelper.QUESTIONS_COLUMN_SECONDCITY,
+            DBHelper.QUESTIONS_COLUMN_THIRDCITY
     };
 
     public QuestionsData( Context context ) {
-        this.questionsDbHelper = QuestionsDBHelper.getInstance( context );
+        this.dbHelper = DBHelper.getInstance( context );
     }
 
     // Open the database
     public void open() {
-        db = questionsDbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
         Log.d( DEBUG_TAG, "QuestionsData: db open" );
     }
 
     // Close the database
     public void close() {
-        if( questionsDbHelper != null ) {
-            questionsDbHelper.close();
+        if( dbHelper != null ) {
+            dbHelper.close();
             Log.d(DEBUG_TAG, "QuestionsData: db closed");
         }
     }
@@ -58,7 +58,7 @@ public class QuestionsData {
 
         try {
             // Execute the select query and get the Cursor to iterate over the retrieved rows
-            cursor = db.query( QuestionsDBHelper.TABLE_QUESTIONS, allColumns,
+            cursor = db.query( DBHelper.TABLE_QUESTIONS, allColumns,
                     null, null, null, null, null );
 
             // collect all job leads into a List
@@ -69,15 +69,15 @@ public class QuestionsData {
                     if( cursor.getColumnCount() >= 5) {
 
                         // get all attribute values of this job lead
-                        columnIndex = cursor.getColumnIndex( QuestionsDBHelper.QUESTIONS_COLUMN_ID);
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUESTIONS_COLUMN_ID);
                         long id = cursor.getLong( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuestionsDBHelper.QUESTIONS_COLUMN_STATENAME);
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUESTIONS_COLUMN_STATENAME);
                         String stateName = cursor.getString( columnIndex );
-                        columnIndex = cursor.getColumnIndex( QuestionsDBHelper.QUESTIONS_COLUMN_CAPITALCITY);
+                        columnIndex = cursor.getColumnIndex( DBHelper.QUESTIONS_COLUMN_CAPITALCITY);
                         String capitalCity = cursor.getString( columnIndex );
-                        columnIndex = cursor.getColumnIndex(QuestionsDBHelper.QUESTIONS_COLUMN_SECONDCITY);
+                        columnIndex = cursor.getColumnIndex(DBHelper.QUESTIONS_COLUMN_SECONDCITY);
                         String secondCity = cursor.getString( columnIndex );
-                        columnIndex = cursor.getColumnIndex(QuestionsDBHelper.QUESTIONS_COLUMN_THIRDCITY);
+                        columnIndex = cursor.getColumnIndex(DBHelper.QUESTIONS_COLUMN_THIRDCITY);
                         String thirdCity = cursor.getString( columnIndex );
 
                         // create a new Question object and set its state to the retrieved values
@@ -109,12 +109,12 @@ public class QuestionsData {
 
     public void storeQuestion(String stateName, String capitalCity, String secondCity, String thirdCity) {
         ContentValues values = new ContentValues();
-        values.put(QuestionsDBHelper.QUESTIONS_COLUMN_STATENAME, stateName);
-        values.put(QuestionsDBHelper.QUESTIONS_COLUMN_CAPITALCITY, capitalCity);
-        values.put(QuestionsDBHelper.QUESTIONS_COLUMN_SECONDCITY, secondCity);
-        values.put(QuestionsDBHelper.QUESTIONS_COLUMN_THIRDCITY, thirdCity);
+        values.put(DBHelper.QUESTIONS_COLUMN_STATENAME, stateName);
+        values.put(DBHelper.QUESTIONS_COLUMN_CAPITALCITY, capitalCity);
+        values.put(DBHelper.QUESTIONS_COLUMN_SECONDCITY, secondCity);
+        values.put(DBHelper.QUESTIONS_COLUMN_THIRDCITY, thirdCity);
 
-        db.insert(QuestionsDBHelper.TABLE_QUESTIONS, null, values );
+        db.insert(DBHelper.TABLE_QUESTIONS, null, values );
     }
 
 
