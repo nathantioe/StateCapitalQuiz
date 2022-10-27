@@ -13,6 +13,9 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     public static final String DEBUG_TAG = "MainActivity";
+    //QuizzesData quizzesData = null;
+
+    // Note: Feel free to ignore/delete comments. I just wrote it to test creating the databases
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,5 +61,22 @@ public class MainActivity extends AppCompatActivity {
                 //
             }
         }
+        //quizzesData = new QuizzesData(getApplicationContext());
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if( quizzesData != null ) {
+//            quizzesData.open();
+//        }
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        if (quizzesData != null) {
+//            quizzesData.close();
+//        }
+//    }
 }
