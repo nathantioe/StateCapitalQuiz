@@ -14,9 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,9 +32,9 @@ public class QuizFragmentContainer extends Fragment {
 
     ViewPager2 pager;
     QuizPagerAdapter qAdapter;
-    private static ArrayList<Question> questions = new ArrayList<>();
+    private static ArrayList<Question> questions = new ArrayList<>(); // ** note, use the6Questions ArrayList instead?
 
-    public static int[] rightAnswers = {0,0,0,0,0,0};
+    public static int[] rightAnswers = {0,0,0,0,0,0}; // ** note, use answers ArrayList instead? See added variables
     public int hej = 1;
     boolean getsRotated = false;
 
@@ -42,6 +46,20 @@ public class QuizFragmentContainer extends Fragment {
             "californa", "sacramento", "los angeles", "san diego",
             "colorado", "denver", "boulder", "aspen"
     };
+
+    /** ADDED VARIABLES from Nathan */
+    // didn't want to remove your questions array list on top, but feel free to make some changes
+
+    // the6Questions list will be populated with 6 questions that are randomly ordered
+    // The question numbers are random, but you still may need to reorder the answer choices
+    private static ArrayList<Question> the6Questions = new ArrayList<>();
+
+    // answers will contain list of string of the answers/capital cities
+    private static ArrayList<String> answers = new ArrayList<>();
+
+    // classes to help read/store questions/quizzes
+    private QuestionsData questionsData = null;
+    private QuizzesData quizzesData = null;
 
 
 
@@ -102,61 +120,75 @@ public class QuizFragmentContainer extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
 
+        /** Added by Nathan */
+        questionsData = new QuestionsData(getActivity());
+        quizzesData = new QuizzesData(getActivity());
+        questionsData.open();
+        quizzesData.open();
+        new QuestionDBReader().execute();
+
+        /** */
+
         //here the database should give a list question on the same structure as below,
         // this code will then scrable the answers and keep track of the score.
 
         if (getsRotated == false){
 
-            questions.add(new Question("Alabama", "Montgomery", "birmingham", "Auburn"));
-            questions.add(new Question("Alaska", "Juneau", "anchorage", "Fairbanks"));
-            questions.add(new Question("Arizona", "phonenic", "Tucson", "scottsdale"));
-            questions.add(new Question("arkanasas", "little rock", "hot springs", "bentonville"));
-            questions.add(new Question("californa", "sacramento", "los angeles", "san diego"));
-            questions.add(new Question("colorado", "denver", "boulder", "aspen"));
+            /** No longer needed?? */
+//            questions.add(new Question("Alabama", "Montgomery", "birmingham", "Auburn"));
+//            questions.add(new Question("Alaska", "Juneau", "anchorage", "Fairbanks"));
+//            questions.add(new Question("Arizona", "phonenic", "Tucson", "scottsdale"));
+//            questions.add(new Question("arkanasas", "little rock", "hot springs", "bentonville"));
+//            questions.add(new Question("californa", "sacramento", "los angeles", "san diego"));
+//            questions.add(new Question("colorado", "denver", "boulder", "aspen"));
 
 
-            for (int i=0;i<6;i++){
-                int random_int = (int)Math.floor(Math.random()*(6));
-                Log.d("random int", Integer.toString(random_int));
-                if (random_int == 0){
-                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-                    statesAndCapitals[i*4 + 1] = questions.get(i).getCapitalCity();
-                    statesAndCapitals[i*4 + 2] = questions.get(i).getSecondCity();
-                    statesAndCapitals[i*4 + 3] = questions.get(i).getThirdCity();
-                    rightAnswers[i] = 1;
-                } else if (random_int == 1){
-                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-                    statesAndCapitals[i*4 + 1] = questions.get(i).getCapitalCity();
-                    statesAndCapitals[i*4 + 2] = questions.get(i).getThirdCity();
-                    statesAndCapitals[i*4 + 3] = questions.get(i).getSecondCity();
-                    rightAnswers[i] = 1;
-                } else if (random_int == 2){
-                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-                    statesAndCapitals[i*4 + 1] = questions.get(i).getSecondCity();
-                    statesAndCapitals[i*4 + 2] = questions.get(i).getCapitalCity();
-                    statesAndCapitals[i*4 + 3] = questions.get(i).getThirdCity();
-                    rightAnswers[i] = 2;
-                } else if (random_int == 3){
-                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-                    statesAndCapitals[i*4 + 1] = questions.get(i).getThirdCity();
-                    statesAndCapitals[i*4 + 2] = questions.get(i).getCapitalCity();
-                    statesAndCapitals[i*4 + 3] = questions.get(i).getSecondCity();
-                    rightAnswers[i] = 2;
-                } else if (random_int == 4){
-                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-                    statesAndCapitals[i*4 + 1] = questions.get(i).getSecondCity();
-                    statesAndCapitals[i*4 + 2] = questions.get(i).getThirdCity();
-                    statesAndCapitals[i*4 + 3] = questions.get(i).getCapitalCity();
-                    rightAnswers[i] = 3;
-                } else if (random_int == 5){
-                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-                    statesAndCapitals[i*4 + 1] = questions.get(i).getThirdCity();
-                    statesAndCapitals[i*4 + 2] = questions.get(i).getSecondCity();
-                    statesAndCapitals[i*4 + 3] = questions.get(i).getCapitalCity();
-                    rightAnswers[i] = 3;
-                }
-
-            }
+            /**
+             * Was a little confused here.
+             * Is this shuffling the question order, or is it shuffling the answer choices the user sees?
+             * Had to comment it out for the code to work*/
+//            for (int i=0;i<6;i++){
+//                int random_int = (int)Math.floor(Math.random()*(6));
+//                Log.d("random int", Integer.toString(random_int));
+//                if (random_int == 0){
+//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
+//                    statesAndCapitals[i*4 + 1] = questions.get(i).getCapitalCity();
+//                    statesAndCapitals[i*4 + 2] = questions.get(i).getSecondCity();
+//                    statesAndCapitals[i*4 + 3] = questions.get(i).getThirdCity();
+//                    rightAnswers[i] = 1;
+//                } else if (random_int == 1){
+//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
+//                    statesAndCapitals[i*4 + 1] = questions.get(i).getCapitalCity();
+//                    statesAndCapitals[i*4 + 2] = questions.get(i).getThirdCity();
+//                    statesAndCapitals[i*4 + 3] = questions.get(i).getSecondCity();
+//                    rightAnswers[i] = 1;
+//                } else if (random_int == 2){
+//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
+//                    statesAndCapitals[i*4 + 1] = questions.get(i).getSecondCity();
+//                    statesAndCapitals[i*4 + 2] = questions.get(i).getCapitalCity();
+//                    statesAndCapitals[i*4 + 3] = questions.get(i).getThirdCity();
+//                    rightAnswers[i] = 2;
+//                } else if (random_int == 3){
+//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
+//                    statesAndCapitals[i*4 + 1] = questions.get(i).getThirdCity();
+//                    statesAndCapitals[i*4 + 2] = questions.get(i).getCapitalCity();
+//                    statesAndCapitals[i*4 + 3] = questions.get(i).getSecondCity();
+//                    rightAnswers[i] = 2;
+//                } else if (random_int == 4){
+//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
+//                    statesAndCapitals[i*4 + 1] = questions.get(i).getSecondCity();
+//                    statesAndCapitals[i*4 + 2] = questions.get(i).getThirdCity();
+//                    statesAndCapitals[i*4 + 3] = questions.get(i).getCapitalCity();
+//                    rightAnswers[i] = 3;
+//                } else if (random_int == 5){
+//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
+//                    statesAndCapitals[i*4 + 1] = questions.get(i).getThirdCity();
+//                    statesAndCapitals[i*4 + 2] = questions.get(i).getSecondCity();
+//                    statesAndCapitals[i*4 + 3] = questions.get(i).getCapitalCity();
+//                    rightAnswers[i] = 3;
+//                }
+//
+//            }
         }
 
 
@@ -190,5 +222,86 @@ public class QuizFragmentContainer extends Fragment {
         // etc.
     }
 
+    /** ADDED FUNCTIONS BELOW by Nathan */
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(questionsData != null && !questionsData.isDBOpen()) {
+            questionsData.open();
+        }
+        if(quizzesData != null && !quizzesData.isDBOpen()) {
+            quizzesData.open();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(questionsData != null) {
+            questionsData.close();
+        }
+        if(quizzesData != null) {
+            quizzesData.close();
+        }
+    }
+
+    /** AsyncTask for reading Questions from DB */
+    public class QuestionDBReader extends AsyncTask<Void, List<Question>> {
+
+        @Override
+        protected List<Question> doInBackground( Void... params ) {
+            // retrieve all the questions from database
+            List<Question> questions = questionsData.retrieveAllQuestions();
+            return questions;
+        }
+
+        @Override
+        protected void onPostExecute( List<Question> allQuestions ) {
+            // when all the questions have been retrieved from database, process them
+            setUpQuestions(allQuestions);
+            addQuizToDB();
+        }
+    }
+
+    /** helper method to set up the questions */
+    private void setUpQuestions(List<Question> allQuestions) {
+        List<Question> questions = allQuestions;
+        Collections.shuffle(questions); // shuffle the 50 questions
+        for (int i = 0; i < 6; i++) { // take the first 6 questions
+            the6Questions.add(questions.get(i)); // add to list of the 6 questions
+            answers.add(questions.get(i).getCapitalCity()); // add list of answers
+        }
+    }
+
+    /** method to create quiz and add it to DB */
+    public void addQuizToDB() {
+        Quiz quiz = new Quiz("", // empty date
+                the6Questions.get(0).getId(), // q1
+                the6Questions.get(1).getId(), // q2
+                the6Questions.get(2).getId(), // q3
+                the6Questions.get(3).getId(), // q4
+                the6Questions.get(4).getId(), // q5
+                the6Questions.get(5).getId(), // q6
+                0, // result
+                0); // questions answered
+        new QuizDBWriter().execute(quiz);
+    }
+
+    /** AsyncTask for creating Quiz row in Quiz table */
+    public class QuizDBWriter extends AsyncTask<Quiz, Quiz> {
+
+        // store quiz in db
+        @Override
+        protected Quiz doInBackground( Quiz... quizzes ) {
+            quizzesData.storeQuiz( quizzes[0] );
+            return quizzes[0];
+        }
+
+        // when quiz is finished being stored, do nothing
+        @Override
+        protected void onPostExecute( Quiz jobLead ) {
+            // does nothing
+        }
+    }
 }
