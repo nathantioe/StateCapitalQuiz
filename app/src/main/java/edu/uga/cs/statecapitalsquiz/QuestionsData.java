@@ -43,6 +43,19 @@ public class QuestionsData {
         }
     }
 
+    public boolean isEmpty() {
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBHelper.TABLE_QUESTIONS, null);
+        if(cursor != null) {
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            if (count > 0) {
+                return false;
+            }
+            cursor.close();
+        }
+        return true;
+    }
+
     public boolean isDBOpen()
     {
         return db.isOpen();
@@ -107,12 +120,12 @@ public class QuestionsData {
         return questions;
     }
 
-    public void storeQuestion(String stateName, String capitalCity, String secondCity, String thirdCity) {
+    public void storeQuestion(Question question) {
         ContentValues values = new ContentValues();
-        values.put(DBHelper.QUESTIONS_COLUMN_STATENAME, stateName);
-        values.put(DBHelper.QUESTIONS_COLUMN_CAPITALCITY, capitalCity);
-        values.put(DBHelper.QUESTIONS_COLUMN_SECONDCITY, secondCity);
-        values.put(DBHelper.QUESTIONS_COLUMN_THIRDCITY, thirdCity);
+        values.put(DBHelper.QUESTIONS_COLUMN_STATENAME, question.getStateName());
+        values.put(DBHelper.QUESTIONS_COLUMN_CAPITALCITY, question.getCapitalCity());
+        values.put(DBHelper.QUESTIONS_COLUMN_SECONDCITY, question.getSecondCity());
+        values.put(DBHelper.QUESTIONS_COLUMN_THIRDCITY, question.getThirdCity());
 
         db.insert(DBHelper.TABLE_QUESTIONS, null, values );
     }
