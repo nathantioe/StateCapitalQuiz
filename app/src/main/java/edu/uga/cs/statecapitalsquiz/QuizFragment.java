@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -20,11 +21,12 @@ import org.w3c.dom.Text;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class QuizFragment extends Fragment {
 
-    private static final String[] statesAndCapitals = {
+    private static final String[] statesAndCapitalss = {
             "Alabama", "Montgomery", "birmingham", "Auburn",
             "Alaska", "Juneau", "anchorage", "Fairbanks",
             "Arizona", "phonenic", "Tucson", "scottsdale",
@@ -33,8 +35,12 @@ public class QuizFragment extends Fragment {
             "colorado", "denver", "boulder", "aspen"
     };
 
+    private static ArrayList<Question> questionss = new ArrayList<>();
+
+
+
+    TextView results;
     private int[] answers;
-    public static int[] rightAnswers = {1, 1, 1, 1, 1, 1};
 
     private int whichState;
 
@@ -56,7 +62,6 @@ public class QuizFragment extends Fragment {
         if (getArguments() != null ){
             whichState = getArguments().getInt( "stateNum" );
         }
-
     }
 
     @Override
@@ -73,12 +78,19 @@ public class QuizFragment extends Fragment {
 
 
         for (int i=0;i<6;i++){
-            if (QuizPagerAdapter.answers[i] == rightAnswers[i] ){
+            if (QuizPagerAdapter.answers[i] == QuizFragmentContainer.rightAnswers[i] ){
                 localScore++;
             }
         }
         //Log.d("updatescore", Integer.toString(localScore));
         QuizPagerAdapter.score = localScore;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        results = (TextView)getActivity().findViewById(R.id.results);
+
     }
 
     @Override
@@ -90,15 +102,22 @@ public class QuizFragment extends Fragment {
              answers = new int[]{0, 0, 0, 0, 0, 0};
         }
 
+        ViewPager2 pager = view.findViewById( R.id.viewPager );
+        if (pager != null){
+            pager.setUserInputEnabled(false);
+        }
+
+
+
         TextView question = view.findViewById( R.id.textView2 );
         RadioButton radioButton = view.findViewById( R.id.radioButton );
         RadioButton radioButton2 = view.findViewById( R.id.radioButton2 );
         RadioButton radioButton3 = view.findViewById( R.id.radioButton3 );
 
-        question.setText( "What is the state caapital of: " + statesAndCapitals[ whichState * 4 ] );
-        radioButton.setText( statesAndCapitals [ (whichState * 4) + 1] );
-        radioButton2.setText( statesAndCapitals [ (whichState * 4) + 2] );
-        radioButton3.setText( statesAndCapitals [ (whichState * 4) + 3] );
+        question.setText( "What is the state caapital of: " + QuizFragmentContainer.statesAndCapitals[whichState * 4] );
+        radioButton.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 1] );
+        radioButton2.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 2] );
+        radioButton3.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 3] );
 
         updateScore();
         //Log.d("whichstate", Integer.toString(whichState));
@@ -108,6 +127,10 @@ public class QuizFragment extends Fragment {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                //ViewPager2 pager = view.findViewById( R.id.viewPager );
+                //if (pager != null){
+                //    pager.setUserInputEnabled(true);
+                //}
 
                 if (i == 2131231209){
                     QuizPagerAdapter.answers[whichState] = 1;
@@ -129,14 +152,17 @@ public class QuizFragment extends Fragment {
                 updateScore();
                 //Log.d("whichstate", Integer.toString(whichState));
                 if (whichState > 0){
-                    TextView results = (TextView)getActivity().findViewById(R.id.results);
+                    results = (TextView)getActivity().findViewById(R.id.results);
 
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                     LocalDateTime now = LocalDateTime.now();
                     System.out.println(dtf.format(now));
                     String time = dtf.format(now);
 
-                    results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+                    if (results != null){
+                        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+                    }
+
                     //Log.d("quizpageadapterscore", Integer.toString(QuizPagerAdapter.score));
                     //Log.d("checkedchangeSettext", (String) results.getText());
                 }

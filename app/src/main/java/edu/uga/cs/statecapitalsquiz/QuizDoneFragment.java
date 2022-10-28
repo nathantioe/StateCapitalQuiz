@@ -60,6 +60,12 @@ public class QuizDoneFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -75,9 +81,10 @@ public class QuizDoneFragment extends Fragment {
         System.out.println(dtf.format(now));
         String time = dtf.format(now);
 
-        //results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
 
         Button newQuiz = view.findViewById( R.id.button4 );
+        Button reviewQuiz = view.findViewById( R.id.button3 );
 
         newQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +95,20 @@ public class QuizDoneFragment extends Fragment {
                 mainActivity.quizButtonClick();
             }
         });
+
+        reviewQuiz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QuizPagerAdapter.score = 0;
+                QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.reviewButtonClick();
+            }
+        });
+
+
+
+
 
 
 
