@@ -83,14 +83,18 @@ public class QuizDoneFragment extends Fragment {
 
         results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
 
+        //TODO: Store quiz data in database
+
         Button newQuiz = view.findViewById( R.id.button4 );
         Button reviewQuiz = view.findViewById( R.id.button3 );
 
         newQuiz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                QuizFragmentContainer.setUpForNewQuiz();
                 QuizPagerAdapter.score = 0;
-                QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
+                //QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
+                QuizPagerAdapter.resetUserAnswers();
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.quizButtonClick();
             }
@@ -100,7 +104,8 @@ public class QuizDoneFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 QuizPagerAdapter.score = 0;
-                QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
+                //QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
+                QuizPagerAdapter.resetUserAnswers();
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.reviewButtonClick();
             }

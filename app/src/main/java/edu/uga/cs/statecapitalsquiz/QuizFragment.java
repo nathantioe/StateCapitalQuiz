@@ -19,39 +19,48 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class QuizFragment extends Fragment {
 
-    private static final String[] statesAndCapitalss = {
-            "Alabama", "Montgomery", "birmingham", "Auburn",
-            "Alaska", "Juneau", "anchorage", "Fairbanks",
-            "Arizona", "phonenic", "Tucson", "scottsdale",
-            "arkanasas", "little rock", "hot springs", "bentonville",
-            "californa", "sacramento", "los angeles", "san diego",
-            "colorado", "denver", "boulder", "aspen"
-    };
+//    private static final String[] statesAndCapitalss = {
+//            "Alabama", "Montgomery", "birmingham", "Auburn",
+//            "Alaska", "Juneau", "anchorage", "Fairbanks",
+//            "Arizona", "phonenic", "Tucson", "scottsdale",
+//            "arkanasas", "little rock", "hot springs", "bentonville",
+//            "californa", "sacramento", "los angeles", "san diego",
+//            "colorado", "denver", "boulder", "aspen"
+//    };
 
-    private static ArrayList<Question> questionss = new ArrayList<>();
-
-
+    private static ArrayList<String> answerChoices;
+    private int questionNumber;
 
     TextView results;
-    private int[] answers;
-
-    private int whichState;
+//    private int[] answers;
+//
+//    private int whichState;
 
     public QuizFragment() {
 
     }
 
-    public static QuizFragment newInstance( int stateNum ) {
+//    public static QuizFragment newInstance( int stateNum ) {
+//        QuizFragment fragment = new QuizFragment();
+//        Bundle args = new Bundle();
+//        args.putInt( "stateNum", stateNum);
+//        fragment.setArguments( args );
+//        return fragment;
+//    }
+
+    public static QuizFragment newInstance( int questionNumber ) {
         QuizFragment fragment = new QuizFragment();
         Bundle args = new Bundle();
-        args.putInt( "stateNum", stateNum);
+        args.putInt( "questionNumber", questionNumber);
         fragment.setArguments( args );
         return fragment;
     }
@@ -60,7 +69,7 @@ public class QuizFragment extends Fragment {
     public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null ){
-            whichState = getArguments().getInt( "stateNum" );
+            questionNumber = getArguments().getInt( "questionNumber" );
         }
     }
 
@@ -72,16 +81,23 @@ public class QuizFragment extends Fragment {
     }
 
     public void updateScore(){
+        // TODO: Fix scoring system, not properly updating in the Done screen
         int localScore = 0;
         //Log.d("answers", Arrays.toString(QuizPagerAdapter.answers));
         //Log.d("rightanswers", Arrays.toString(rightAnswers));
 
 
-        for (int i=0;i<6;i++){
-            if (QuizPagerAdapter.answers[i] == QuizFragmentContainer.rightAnswers[i] ){
+//        for (int i=0;i<6;i++){
+//            if (QuizPagerAdapter.answers[i] == QuizFragmentContainer.rightAnswers[i] ){
+//                localScore++;
+//            }
+//        }
+        for (int i = 0; i < 6; i++) {
+            if (QuizPagerAdapter.userAnswers.get(questionNumber).equals(QuizFragmentContainer.answers.get(questionNumber))) {
                 localScore++;
             }
         }
+
         //Log.d("updatescore", Integer.toString(localScore));
         QuizPagerAdapter.score = localScore;
     }
@@ -98,9 +114,9 @@ public class QuizFragment extends Fragment {
         //public void onActivityCreated(Bundle savedInstanceState) {
         super.onViewCreated( view, savedInstanceState );
 
-        if (answers == null){
-             answers = new int[]{0, 0, 0, 0, 0, 0};
-        }
+//        if (answers == null){
+//             answers = new int[]{0, 0, 0, 0, 0, 0};
+//        }
 
         ViewPager2 pager = view.findViewById( R.id.viewPager );
         if (pager != null){
@@ -114,10 +130,20 @@ public class QuizFragment extends Fragment {
         RadioButton radioButton2 = view.findViewById( R.id.radioButton2 );
         RadioButton radioButton3 = view.findViewById( R.id.radioButton3 );
 
-        question.setText( "What is the state caapital of: " + QuizFragmentContainer.statesAndCapitals[whichState * 4] );
-        radioButton.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 1] );
-        radioButton2.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 2] );
-        radioButton3.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 3] );
+        //question.setText( "What is the state capital of: " + QuizFragmentContainer.statesAndCapitals[whichState * 4] );
+        question.setText("What is the state capital of: " + QuizFragmentContainer.the6Questions.get(questionNumber).getStateName());
+        answerChoices = new ArrayList<>();
+        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity());
+        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
+        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
+        Collections.shuffle(answerChoices);
+        radioButton.setText(answerChoices.get(0));
+        radioButton2.setText(answerChoices.get(1));
+        radioButton3.setText(answerChoices.get(2));
+
+//        radioButton.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 1] );
+//        radioButton2.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 2] );
+//        radioButton3.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 3] );
 
         updateScore();
         //Log.d("whichstate", Integer.toString(whichState));
@@ -133,25 +159,28 @@ public class QuizFragment extends Fragment {
                 //}
 
                 if (i == 2131231209){
-                    QuizPagerAdapter.answers[whichState] = 1;
-                    if (answers != null) {
-                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
-                    }
+                    QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(0));
+//                    QuizPagerAdapter.answers[questionNumber] = 1;
+//                    if (answers != null) {
+//                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
+//                    }
                 } else if (i == 2131231210){
-                    QuizPagerAdapter.answers[whichState] = 2;
-                    if (answers != null) {
-                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
-                    }
+                    QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(1));
+//                    QuizPagerAdapter.answers[questionNumber] = 2;
+//                    if (answers != null) {
+//                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
+//                    }
                 } else if (i == 2131231211){
-                    QuizPagerAdapter.answers[whichState] = 3;
-                    if (answers != null) {
-                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
-                    }
+                    QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(2));
+//                    QuizPagerAdapter.answers[questionNumber] = 3;
+//                    if (answers != null) {
+//                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
+//                    }
                 }
 
                 updateScore();
                 //Log.d("whichstate", Integer.toString(whichState));
-                if (whichState > 0){
+                if (questionNumber > 0){
                     results = (TextView)getActivity().findViewById(R.id.results);
 
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");

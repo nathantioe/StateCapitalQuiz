@@ -32,34 +32,36 @@ public class QuizFragmentContainer extends Fragment {
 
     ViewPager2 pager;
     QuizPagerAdapter qAdapter;
-    private static ArrayList<Question> questions = new ArrayList<>(); // ** note, use the6Questions ArrayList instead?
 
-    public static int[] rightAnswers = {0,0,0,0,0,0}; // ** note, use answers ArrayList instead? See added variables
-    public int hej = 1;
+    //private static ArrayList<Question> questions = new ArrayList<>(); // ** note, use the6Questions ArrayList instead?
+    //public static int[] rightAnswers = {0,0,0,0,0,0}; // ** note, use answers ArrayList instead? See added variables
+    //public int hej = 1;
+
     boolean getsRotated = false;
 
-    public static final String[] statesAndCapitals = {
-            "Alabama", "Montgomery", "birmingham", "Auburn",
-            "Alaska", "Juneau", "anchorage", "Fairbanks",
-            "Arizona", "phonenic", "Tucson", "scottsdale",
-            "arkanasas", "little rock", "hot springs", "bentonville",
-            "californa", "sacramento", "los angeles", "san diego",
-            "colorado", "denver", "boulder", "aspen"
-    };
+//    public static final String[] statesAndCapitals = {
+//            "Alabama", "Montgomery", "birmingham", "Auburn",
+//            "Alaska", "Juneau", "anchorage", "Fairbanks",
+//            "Arizona", "phonenic", "Tucson", "scottsdale",
+//            "arkanasas", "little rock", "hot springs", "bentonville",
+//            "californa", "sacramento", "los angeles", "san diego",
+//            "colorado", "denver", "boulder", "aspen"
+//    };
 
     /** ADDED VARIABLES from Nathan */
-    // didn't want to remove your questions array list on top, but feel free to make some changes
-
     // the6Questions list will be populated with 6 questions that are randomly ordered
     // The question numbers are random, but you still may need to reorder the answer choices
-    private static ArrayList<Question> the6Questions = new ArrayList<>();
+    public static ArrayList<Question> the6Questions = new ArrayList<>();
 
     // answers will contain list of string of the answers/capital cities
-    private static ArrayList<String> answers = new ArrayList<>();
+    public static ArrayList<String> answers = new ArrayList<>();
 
     // classes to help read/store questions/quizzes
     private QuestionsData questionsData = null;
     private QuizzesData quizzesData = null;
+
+    // save list of 50 questions so that we don't need to retrieve it again from db
+    public static List<Question> all50Questions;
 
 
 
@@ -103,7 +105,8 @@ public class QuizFragmentContainer extends Fragment {
         }
 
         if (savedInstanceState != null){
-            rightAnswers = savedInstanceState.getIntArray("rightAnswers");
+            answers = savedInstanceState.getStringArrayList("answers");
+            //rightAnswers = savedInstanceState.getIntArray("rightAnswers");
             //questions = savedInstanceState.getParcelableArrayList("questions");
             getsRotated = true;
         }
@@ -192,15 +195,15 @@ public class QuizFragmentContainer extends Fragment {
         }
 
 
-        Log.d("states and capitals", Arrays.toString(statesAndCapitals));
-        Log.d("right answers", Arrays.toString(rightAnswers));
+        //Log.d("states and capitals", Arrays.toString(statesAndCapitals));
+        //Log.d("right answers", Arrays.toString(rightAnswers));
 
 
         pager = view.findViewById( R.id.viewPager );
-        pager.setOffscreenPageLimit(8);
-        qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
-        pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
-        pager.setAdapter( qAdapter );
+//        pager.setOffscreenPageLimit(8);
+//        qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
+//        pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
+//        pager.setAdapter( qAdapter );
         //pager.setUserInputEnabled(false);
 
 
@@ -216,7 +219,9 @@ public class QuizFragmentContainer extends Fragment {
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        savedInstanceState.putIntArray("rightAnswers", rightAnswers);
+
+        savedInstanceState.putStringArrayList("answers", answers);
+        //savedInstanceState.putIntArray("rightAnswers", rightAnswers);
         //savedInstanceState.putParcelableArrayList("questions", (ArrayList<? extends Parcelable>) questions);
 
         // etc.
@@ -260,7 +265,13 @@ public class QuizFragmentContainer extends Fragment {
         protected void onPostExecute( List<Question> allQuestions ) {
             // when all the questions have been retrieved from database, process them
             setUpQuestions(allQuestions);
-            addQuizToDB();
+            all50Questions = allQuestions;
+            pager.setOffscreenPageLimit(8);
+            qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
+            pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
+            pager.setAdapter( qAdapter );
+
+            //addQuizToDB();
         }
     }
 
@@ -274,34 +285,48 @@ public class QuizFragmentContainer extends Fragment {
         }
     }
 
-    /** method to create quiz and add it to DB */
-    public void addQuizToDB() {
-        Quiz quiz = new Quiz("", // empty date
-                the6Questions.get(0).getId(), // q1
-                the6Questions.get(1).getId(), // q2
-                the6Questions.get(2).getId(), // q3
-                the6Questions.get(3).getId(), // q4
-                the6Questions.get(4).getId(), // q5
-                the6Questions.get(5).getId(), // q6
-                0, // result
-                0); // questions answered
-        new QuizDBWriter().execute(quiz);
-    }
-
-    /** AsyncTask for creating Quiz row in Quiz table */
-    public class QuizDBWriter extends AsyncTask<Quiz, Quiz> {
-
-        // store quiz in db
-        @Override
-        protected Quiz doInBackground( Quiz... quizzes ) {
-            quizzesData.storeQuiz( quizzes[0] );
-            return quizzes[0];
+    public static void setUpForNewQuiz() {
+        the6Questions.clear();
+        answers.clear();
+        List<Question> questions = all50Questions;
+        Collections.shuffle(questions);
+        for (int i = 0; i < 6; i++) { // take the first 6 questions
+            the6Questions.add(questions.get(i)); // add to list of the 6 questions
+            answers.add(questions.get(i).getCapitalCity()); // add list of answers
         }
 
-        // when quiz is finished being stored, do nothing
-        @Override
-        protected void onPostExecute( Quiz jobLead ) {
-            // does nothing
-        }
     }
+
+
+    /**Ignore the code below, this should be moved to the QuizDoneFragment **/
+//    /** method to create quiz and add it to DB */
+//    public void addQuizToDB() {
+//        Quiz quiz = new Quiz("", // empty date
+//                the6Questions.get(0).getId(), // q1
+//                the6Questions.get(1).getId(), // q2
+//                the6Questions.get(2).getId(), // q3
+//                the6Questions.get(3).getId(), // q4
+//                the6Questions.get(4).getId(), // q5
+//                the6Questions.get(5).getId(), // q6
+//                0, // result
+//                0); // questions answered
+//        new QuizDBWriter().execute(quiz);
+//    }
+//
+//    /** AsyncTask for creating Quiz row in Quiz table */
+//    public class QuizDBWriter extends AsyncTask<Quiz, Quiz> {
+//
+//        // store quiz in db
+//        @Override
+//        protected Quiz doInBackground( Quiz... quizzes ) {
+//            quizzesData.storeQuiz( quizzes[0] );
+//            return quizzes[0];
+//        }
+//
+//        // when quiz is finished being stored, do nothing
+//        @Override
+//        protected void onPostExecute( Quiz jobLead ) {
+//            // does nothing
+//        }
+//    }
 }

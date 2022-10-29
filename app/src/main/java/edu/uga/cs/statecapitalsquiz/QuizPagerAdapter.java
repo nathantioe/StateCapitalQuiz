@@ -10,16 +10,26 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class QuizPagerAdapter extends FragmentStateAdapter {
 
-    public static int[] answers = {0, 0, 0, 0, 0, 0};
+    //public static int[] answers = {0, 0, 0, 0, 0, 0};
+    public static ArrayList<String> userAnswers = new ArrayList<>();
     public static int score = 0;
 
     public QuizPagerAdapter(FragmentManager fragmentManager,
                             Lifecycle lifecycle){
         super( fragmentManager, lifecycle );
+        resetUserAnswers();
+    }
+
+    public static void resetUserAnswers() {
+        userAnswers.clear();
+        for (int i = 0; i < 6; i++) {
+            userAnswers.add("");
+        }
     }
 
     @NonNull
