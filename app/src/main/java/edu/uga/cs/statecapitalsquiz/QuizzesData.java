@@ -157,5 +157,14 @@ public class QuizzesData {
         return quiz;
     }
 
+    public void updateQuizByID(long id, String date, long result, long questionsAnswered) {
+        String update = "UPDATE " + DBHelper.TABLE_QUIZZES
+                + " SET " + DBHelper.QUIZZES_COLUMN_DATE + "='" + date + "'"
+                + ", " + DBHelper.QUIZZES_COLUMN_RESULT + "=" + result
+                + ", " + DBHelper.QUIZZES_COLUMN_QUESTIONSANSWERED + "=" + questionsAnswered
+                + " WHERE " + DBHelper.QUIZZES_COLUMN_ID + "=" + id;
+        db.execSQL(update);
+    }
+
 
 }

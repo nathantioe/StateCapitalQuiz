@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +32,9 @@ public class ReviewQuizzesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private QuizRecyclerAdapter recyclerAdapter;
-    private QuizzesData QuizData = null; //???
+    //private QuizzesData QuizData = null; //???
     private ArrayList<Quiz> quizList = new ArrayList<>();
+    private QuizzesData quizzesData;
 
 
     // TODO: Rename and change types of parameters
@@ -68,18 +70,18 @@ public class ReviewQuizzesFragment extends Fragment {
             //mParam1 = getArguments().getString(ARG_PARAM1);
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        quizList.add(new Quiz("7 oktober", 111, 111, 111, 111, 111, 111, 3, 111));
-        quizList.add(new Quiz("8 oktober", 111, 111, 111, 111, 111, 111, 5, 111));
-        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-        quizList.add(new Quiz("10 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-        quizList.add(new Quiz("11 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-        quizList.add(new Quiz("12 oktober", 111, 111, 111, 111, 111, 111, 44, 111));quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 2, 111));
-        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 3, 111));
-        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
+//
+//        quizList.add(new Quiz("7 oktober", 111, 111, 111, 111, 111, 111, 3, 111));
+//        quizList.add(new Quiz("8 oktober", 111, 111, 111, 111, 111, 111, 5, 111));
+//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
+//        quizList.add(new Quiz("10 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
+//        quizList.add(new Quiz("11 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
+//        quizList.add(new Quiz("12 oktober", 111, 111, 111, 111, 111, 111, 44, 111));quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
+//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
+//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 2, 111));
+//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
+//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 3, 111));
+//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
 
     }
 
@@ -98,13 +100,49 @@ public class ReviewQuizzesFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getActivity() );
         recyclerView.setLayoutManager( layoutManager );
 
-        recyclerAdapter = new QuizRecyclerAdapter( getActivity(), quizList );
-        recyclerView.setAdapter( recyclerAdapter );
+        /** Moved to AsyncTask */
+//        recyclerAdapter = new QuizRecyclerAdapter( getActivity(), quizList );
+//        recyclerView.setAdapter( recyclerAdapter );
 
-        //QuizData = new QuizzesData( getActivity() );
+        quizzesData = new QuizzesData( getActivity() );
+        quizzesData.open();
 
+        new QuizDBReader().execute();
+    }
 
+    /** New functions added by Nathan **/
 
+    // AsyncTask to retrieve all quizzes from db
+    public class QuizDBReader extends AsyncTask<Void, List<Quiz>> {
 
+        @Override
+        protected List<Quiz> doInBackground( Void... params ) {
+            List<Quiz> allQuizzes = quizzesData.retrieveAllQuizzes();
+            return allQuizzes;
+        }
+
+        // after retrieving quizzes, add them to the quiz list
+        @Override
+        protected void onPostExecute(List<Quiz> allQuizzes) {
+            quizList.addAll(allQuizzes);
+            recyclerAdapter = new QuizRecyclerAdapter( getActivity(), quizList );
+            recyclerView.setAdapter( recyclerAdapter );
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (quizzesData != null) {
+            quizzesData.open();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (quizzesData != null) {
+            quizzesData.close();
+        }
     }
 }
