@@ -62,7 +62,7 @@ public class QuizFragmentContainer extends Fragment {
 
     // save list of 50 questions so that we don't need to retrieve it again from db
     public static List<Question> all50Questions;
-
+    public static long currentQuizID = -1;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -266,12 +266,12 @@ public class QuizFragmentContainer extends Fragment {
             // when all the questions have been retrieved from database, process them
             setUpQuestions(allQuestions);
             all50Questions = allQuestions;
+            addQuizToDB();
+
             pager.setOffscreenPageLimit(8);
             qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
             pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
             pager.setAdapter( qAdapter );
-
-            //addQuizToDB();
         }
     }
 
@@ -299,34 +299,32 @@ public class QuizFragmentContainer extends Fragment {
 
 
     /**Ignore the code below, this should be moved to the QuizDoneFragment **/
-//    /** method to create quiz and add it to DB */
-//    public void addQuizToDB() {
-//        Quiz quiz = new Quiz("", // empty date
-//                the6Questions.get(0).getId(), // q1
-//                the6Questions.get(1).getId(), // q2
-//                the6Questions.get(2).getId(), // q3
-//                the6Questions.get(3).getId(), // q4
-//                the6Questions.get(4).getId(), // q5
-//                the6Questions.get(5).getId(), // q6
-//                0, // result
-//                0); // questions answered
-//        new QuizDBWriter().execute(quiz);
-//    }
-//
-//    /** AsyncTask for creating Quiz row in Quiz table */
-//    public class QuizDBWriter extends AsyncTask<Quiz, Quiz> {
-//
-//        // store quiz in db
-//        @Override
-//        protected Quiz doInBackground( Quiz... quizzes ) {
-//            quizzesData.storeQuiz( quizzes[0] );
-//            return quizzes[0];
-//        }
-//
-//        // when quiz is finished being stored, do nothing
-//        @Override
-//        protected void onPostExecute( Quiz jobLead ) {
-//            // does nothing
-//        }
-//    }
+    /** method to create quiz and add it to DB */
+    public void addQuizToDB() {
+        Quiz quiz = new Quiz("", // empty date
+                the6Questions.get(0).getId(), // q1
+                the6Questions.get(1).getId(), // q2
+                the6Questions.get(2).getId(), // q3
+                the6Questions.get(3).getId(), // q4
+                the6Questions.get(4).getId(), // q5
+                the6Questions.get(5).getId(), // q6
+                0, // result
+                0); // questions answered
+        new QuizDBWriter().execute(quiz);
+    }
+
+    /** AsyncTask for creating Quiz row in Quiz table */
+    public class QuizDBWriter extends AsyncTask<Quiz, Quiz> {
+
+        // store quiz in db
+        @Override
+        protected Quiz doInBackground( Quiz... quizzes ) {
+            return quizzesData.storeQuiz( quizzes[0] );
+        }
+
+        @Override
+        protected void onPostExecute( Quiz quiz ) {
+            currentQuizID = quiz.getId();
+        }
+    }
 }

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +32,9 @@ public class QuizDoneFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private int score;
+    private QuizzesData quizzesData;
+    private TextView results;
+    private String time;
 
     public QuizDoneFragment() {
         // Required empty public constructor
@@ -60,12 +66,6 @@ public class QuizDoneFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -75,50 +75,99 @@ public class QuizDoneFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
 
-        TextView results = view.findViewById( R.id.results );
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(dtf.format(now));
-        String time = dtf.format(now);
+        results = view.findViewById( R.id.results );
+//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+//        LocalDateTime now = LocalDateTime.now();
+//        System.out.println(dtf.format(now));
+//        String time = dtf.format(now);
 
-        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+        //results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
 
-        //TODO: Store quiz data in database
+        //TODO: Update the quiz data in database
+        quizzesData = new QuizzesData(getActivity());
+        quizzesData.open();
 
-        Button newQuiz = view.findViewById( R.id.button4 );
-        Button reviewQuiz = view.findViewById( R.id.button3 );
+        //new QuizDBUpdater().execute(time);
 
-        newQuiz.setOnClickListener(new View.OnClickListener() {
+        Button homeButton = view.findViewById(R.id.button3);
+//        Button newQuiz = view.findViewById( R.id.button4 );
+//        Button reviewQuiz = view.findViewById( R.id.button3 );
+
+//        newQuiz.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                QuizFragmentContainer.setUpForNewQuiz();
+//                //QuizPagerAdapter.score = 0;
+//                //QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
+//                QuizPagerAdapter.resetQuiz();
+//                MainActivity mainActivity = (MainActivity) getActivity();
+//                mainActivity.quizButtonClick();
+//            }
+//        });
+
+//        reviewQuiz.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //QuizPagerAdapter.score = 0;
+//                //QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
+//                QuizPagerAdapter.resetQuiz();
+////                MainActivity mainActivity = (MainActivity) getActivity();
+////                mainActivity.reviewButtonClick();
+//                getActivity().onBackPressed();
+//
+//            }
+//        });
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QuizFragmentContainer.setUpForNewQuiz();
-                QuizPagerAdapter.score = 0;
-                //QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
-                QuizPagerAdapter.resetUserAnswers();
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.quizButtonClick();
+                QuizPagerAdapter.resetQuiz();
+                getActivity().onBackPressed();
             }
         });
-
-        reviewQuiz.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                QuizPagerAdapter.score = 0;
-                //QuizPagerAdapter.answers = new int[]{0, 0, 0, 0, 0, 0};
-                QuizPagerAdapter.resetUserAnswers();
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.reviewButtonClick();
-            }
-        });
-
-
-
-
-
-
-
-
-
-
     }
+
+    public class QuizDBUpdater extends AsyncTask<String, Void> {
+        @Override
+        protected Void doInBackground(String... time) {
+            quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, time[0], QuizPagerAdapter.score, 6);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+
+        }
+
+        // store quiz in db
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(quizzesData != null && !quizzesData.isDBOpen()) {
+            quizzesData.open();
+        }
+        if (QuizPagerAdapter.quizComplete) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            time = dtf.format(now);
+            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+
+            new QuizDBUpdater().execute(time);
+            // reset the quiz so that the time will not change if
+            // the user decides to review quiz and press back button
+        } else {
+            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(quizzesData != null) {
+            quizzesData.close();
+        }
+    }
+
 }
