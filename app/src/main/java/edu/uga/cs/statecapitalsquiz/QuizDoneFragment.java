@@ -36,6 +36,7 @@ public class QuizDoneFragment extends Fragment {
     private QuizzesData quizzesData;
     private TextView results;
     private String time;
+    private boolean alreadySetTime = false;
 
     public QuizDoneFragment() {
         // Required empty public constructor
@@ -63,6 +64,10 @@ public class QuizDoneFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             score = getArguments().getInt("score");
+        }
+        if (savedInstanceState != null) {
+            time = savedInstanceState.getString("time");
+            alreadySetTime = savedInstanceState.getBoolean("alreadySetTime");
         }
     }
 
@@ -145,25 +150,42 @@ public class QuizDoneFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("time", time);
+        outState.putBoolean("alreadySetTime", alreadySetTime);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         if(quizzesData != null && !quizzesData.isDBOpen()) {
             quizzesData.open();
         }
-        if (QuizPagerAdapter.quizComplete) {
-//            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-//            LocalDateTime now = LocalDateTime.now();
-//            time = dtf.format(now);
+
+        if (!alreadySetTime) {
             Calendar calendar = Calendar.getInstance();
             time = calendar.getTime().toString();
-            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
-
             new QuizDBUpdater().execute(time);
-            // reset the quiz so that the time will not change if
-            // the user decides to review quiz and press back button
-        } else {
-            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
+            alreadySetTime = true;
         }
+        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
+        // reset the quiz so that the time will not change if
+        // the user decides to review quiz and press back button
+//        if (QuizPagerAdapter.quizComplete) {
+////            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+////            LocalDateTime now = LocalDateTime.now();
+////            time = dtf.format(now);
+//            Calendar calendar = Calendar.getInstance();
+//            time = calendar.getTime().toString();
+//            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
+//
+//            new QuizDBUpdater().execute(time);
+//            // reset the quiz so that the time will not change if
+//            // the user decides to review quiz and press back button
+//        } else {
+//            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
+//        }
     }
 
     @Override

@@ -42,8 +42,13 @@ public class QuizFragment extends Fragment {
     private ArrayList<String> answerChoices;
     private int questionNumber;
     private boolean hasSelectedCorrectAnswer = false;
+    private String selectedAnswer = "";
 
-    TextView results;
+    private TextView question;
+    private TextView results;
+    private RadioButton radioButton;
+    private RadioButton radioButton2;
+    private RadioButton radioButton3;
 //    private int[] answers;
 //
 //    private int whichState;
@@ -73,6 +78,12 @@ public class QuizFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null ){
             questionNumber = getArguments().getInt( "questionNumber" );
+        }
+        if (savedInstanceState != null) {
+            questionNumber = savedInstanceState.getInt("questionNumber");
+            answerChoices = savedInstanceState.getStringArrayList("answerChoices");
+            selectedAnswer = savedInstanceState.getString("selectedAnswer");
+            QuizPagerAdapter.userAnswers.set(questionNumber, selectedAnswer);
         }
     }
 
@@ -117,8 +128,16 @@ public class QuizFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        results = (TextView)getActivity().findViewById(R.id.results);
+        //results = (TextView)getActivity().findViewById(R.id.results);
         displayCorrectOrIncorrect();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("questionNumber", questionNumber);
+        outState.putStringArrayList("answerChoices", answerChoices);
+        outState.putString("selectedAnswer", selectedAnswer);
     }
 
     public void displayCorrectOrIncorrect() {
@@ -148,20 +167,25 @@ public class QuizFragment extends Fragment {
             pager.setUserInputEnabled(false);
         }
 
-
-
-        TextView question = view.findViewById( R.id.textView2 );
-        RadioButton radioButton = view.findViewById( R.id.radioButton );
-        RadioButton radioButton2 = view.findViewById( R.id.radioButton2 );
-        RadioButton radioButton3 = view.findViewById( R.id.radioButton3 );
+        results = (TextView)getActivity().findViewById(R.id.results);
+        question = view.findViewById( R.id.textView2 );
+        radioButton = view.findViewById( R.id.radioButton );
+        radioButton2 = view.findViewById( R.id.radioButton2 );
+        radioButton3 = view.findViewById( R.id.radioButton3 );
 
         //question.setText( "What is the state capital of: " + QuizFragmentContainer.statesAndCapitals[whichState * 4] );
         question.setText("What is the state capital of: " + QuizFragmentContainer.the6Questions.get(questionNumber).getStateName());
-        answerChoices = new ArrayList<>();
-        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity());
-        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
-        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
-        Collections.shuffle(answerChoices);
+
+        if (savedInstanceState == null) {
+            answerChoices = new ArrayList<>();
+            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity());
+            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
+            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
+            Collections.shuffle(answerChoices);
+//            radioButton.setText(answerChoices.get(0));
+//            radioButton2.setText(answerChoices.get(1));
+//            radioButton3.setText(answerChoices.get(2));
+        }
         radioButton.setText(answerChoices.get(0));
         radioButton2.setText(answerChoices.get(1));
         radioButton3.setText(answerChoices.get(2));
@@ -185,18 +209,21 @@ public class QuizFragment extends Fragment {
 
                 if (i == R.id.radioButton){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(0));
+                    selectedAnswer = answerChoices.get(0);
 //                    QuizPagerAdapter.answers[questionNumber] = 1;
 //                    if (answers != null) {
 //                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
 //                    }
                 } else if (i == R.id.radioButton2){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(1));
+                    selectedAnswer = answerChoices.get(1);
 //                    QuizPagerAdapter.answers[questionNumber] = 2;
 //                    if (answers != null) {
 //                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
 //                    }
                 } else if (i == R.id.radioButton3){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(2));
+                    selectedAnswer = answerChoices.get(2);
 //                    QuizPagerAdapter.answers[questionNumber] = 3;
 //                    if (answers != null) {
 //                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));

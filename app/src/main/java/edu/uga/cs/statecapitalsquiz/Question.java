@@ -1,12 +1,15 @@
 package edu.uga.cs.statecapitalsquiz;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * This class (a POJO) represents a single question, including the question id, state name,
  * capital city, second city, and third city.
  * The id is -1 if the object has not been persisted in the database yet, and
  * the db table's primary key value, if it has been persisted.
  */
-public class Question {
+public class Question implements Parcelable {
 
     private long   id;
     private String stateName;
@@ -30,6 +33,26 @@ public class Question {
         this.secondCity = secondCity;
         this.thirdCity = thirdCity;
     }
+
+    protected Question(Parcel in) {
+        id = in.readLong();
+        stateName = in.readString();
+        capitalCity = in.readString();
+        secondCity = in.readString();
+        thirdCity = in.readString();
+    }
+
+    public static final Creator<Question> CREATOR = new Creator<Question>() {
+        @Override
+        public Question createFromParcel(Parcel in) {
+            return new Question(in);
+        }
+
+        @Override
+        public Question[] newArray(int size) {
+            return new Question[size];
+        }
+    };
 
     public long getId()
     {
@@ -84,5 +107,19 @@ public class Question {
     public String toString()
     {
         return id + ": " + stateName + " " + capitalCity + " " + secondCity + " " + thirdCity;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeString(stateName);
+        parcel.writeString(capitalCity);
+        parcel.writeString(secondCity);
+        parcel.writeString(thirdCity);
     }
 }

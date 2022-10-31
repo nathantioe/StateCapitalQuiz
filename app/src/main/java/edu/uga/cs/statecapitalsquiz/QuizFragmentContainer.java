@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,7 +62,7 @@ public class QuizFragmentContainer extends Fragment {
     private QuizzesData quizzesData = null;
 
     // save list of 50 questions so that we don't need to retrieve it again from db
-    public static List<Question> all50Questions;
+    public static ArrayList<Question> all50Questions;
     public static long currentQuizID = -1;
 
 
@@ -106,6 +107,9 @@ public class QuizFragmentContainer extends Fragment {
 
         if (savedInstanceState != null){
             answers = savedInstanceState.getStringArrayList("answers");
+            all50Questions = savedInstanceState.getParcelableArrayList("all50Questions");
+            the6Questions = savedInstanceState.getParcelableArrayList("the6Questions");
+            currentQuizID = savedInstanceState.getLong("currentQuizID");
             //rightAnswers = savedInstanceState.getIntArray("rightAnswers");
             //questions = savedInstanceState.getParcelableArrayList("questions");
             getsRotated = true;
@@ -128,7 +132,15 @@ public class QuizFragmentContainer extends Fragment {
         quizzesData = new QuizzesData(getActivity());
         questionsData.open();
         quizzesData.open();
-        new QuestionDBReader().execute();
+        pager = view.findViewById( R.id.viewPager );
+        if (savedInstanceState != null) {
+            pager.setOffscreenPageLimit(8);
+            qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
+            pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
+            pager.setAdapter( qAdapter );
+        } else {
+            new QuestionDBReader().execute();
+        }
 
         /** */
 
@@ -198,8 +210,6 @@ public class QuizFragmentContainer extends Fragment {
         //Log.d("states and capitals", Arrays.toString(statesAndCapitals));
         //Log.d("right answers", Arrays.toString(rightAnswers));
 
-
-        pager = view.findViewById( R.id.viewPager );
 //        pager.setOffscreenPageLimit(8);
 //        qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
 //        pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
@@ -221,6 +231,10 @@ public class QuizFragmentContainer extends Fragment {
         // killed and restarted.
 
         savedInstanceState.putStringArrayList("answers", answers);
+        savedInstanceState.putParcelableArrayList("all50Questions", all50Questions);
+        savedInstanceState.putParcelableArrayList("the6Questions", the6Questions);
+        savedInstanceState.putLong("currentQuizID", currentQuizID);
+
         //savedInstanceState.putIntArray("rightAnswers", rightAnswers);
         //savedInstanceState.putParcelableArrayList("questions", (ArrayList<? extends Parcelable>) questions);
 
@@ -252,17 +266,17 @@ public class QuizFragmentContainer extends Fragment {
     }
 
     /** AsyncTask for reading Questions from DB */
-    public class QuestionDBReader extends AsyncTask<Void, List<Question>> {
+    public class QuestionDBReader extends AsyncTask<Void, ArrayList<Question>> {
 
         @Override
-        protected List<Question> doInBackground( Void... params ) {
+        protected ArrayList<Question> doInBackground( Void... params ) {
             // retrieve all the questions from database
-            List<Question> questions = questionsData.retrieveAllQuestions();
+            ArrayList<Question> questions = questionsData.retrieveAllQuestions();
             return questions;
         }
 
         @Override
-        protected void onPostExecute( List<Question> allQuestions ) {
+        protected void onPostExecute( ArrayList<Question> allQuestions ) {
             // when all the questions have been retrieved from database, process them
             setUpQuestions(allQuestions);
             all50Questions = allQuestions;
