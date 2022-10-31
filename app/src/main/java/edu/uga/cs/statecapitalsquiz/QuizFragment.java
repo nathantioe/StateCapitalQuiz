@@ -118,7 +118,20 @@ public class QuizFragment extends Fragment {
     public void onResume() {
         super.onResume();
         results = (TextView)getActivity().findViewById(R.id.results);
+        displayCorrectOrIncorrect();
+    }
 
+    public void displayCorrectOrIncorrect() {
+        if (questionNumber >= 1) {
+            String text = "";
+            if (QuizPagerAdapter.userAnswers.get(questionNumber - 1).equals(QuizFragmentContainer.answers.get(questionNumber - 1))) {
+                text = "Correct!";
+            } else {
+                text = "Incorrect!";
+            }
+            Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     @Override
