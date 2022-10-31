@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,6 +123,7 @@ public class QuizDoneFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 QuizPagerAdapter.resetQuiz();
+                QuizFragmentContainer.setUpForNewQuiz();
                 getActivity().onBackPressed();
             }
         });
@@ -149,16 +151,18 @@ public class QuizDoneFragment extends Fragment {
             quizzesData.open();
         }
         if (QuizPagerAdapter.quizComplete) {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            time = dtf.format(now);
-            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+//            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+//            LocalDateTime now = LocalDateTime.now();
+//            time = dtf.format(now);
+            Calendar calendar = Calendar.getInstance();
+            time = calendar.getTime().toString();
+            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
 
             new QuizDBUpdater().execute(time);
             // reset the quiz so that the time will not change if
             // the user decides to review quiz and press back button
         } else {
-            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+            results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
         }
     }
 

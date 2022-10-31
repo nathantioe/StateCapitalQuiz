@@ -9,6 +9,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,8 +39,9 @@ public class QuizFragment extends Fragment {
 //            "colorado", "denver", "boulder", "aspen"
 //    };
 
-    private static ArrayList<String> answerChoices;
+    private ArrayList<String> answerChoices;
     private int questionNumber;
+    private boolean hasSelectedCorrectAnswer = false;
 
     TextView results;
 //    private int[] answers;
@@ -83,7 +85,16 @@ public class QuizFragment extends Fragment {
 
     public void updateScore(){
         // TODO: Fix scoring system, not properly updating in the Done screen
-        int localScore = 0;
+        if (QuizPagerAdapter.userAnswers.get(questionNumber).equals(QuizFragmentContainer.answers.get(questionNumber))) {
+            hasSelectedCorrectAnswer = true;
+            QuizPagerAdapter.score++;
+        } else {
+            if (hasSelectedCorrectAnswer) {
+                QuizPagerAdapter.score--;
+            }
+        }
+
+       // int localScore = 0;
         //Log.d("answers", Arrays.toString(QuizPagerAdapter.answers));
         //Log.d("rightanswers", Arrays.toString(rightAnswers));
 
@@ -93,14 +104,14 @@ public class QuizFragment extends Fragment {
 //                localScore++;
 //            }
 //        }
-        for (int i = 0; i < 6; i++) {
-            if (QuizPagerAdapter.userAnswers.get(questionNumber).equals(QuizFragmentContainer.answers.get(questionNumber))) {
-                localScore++;
-            }
-        }
+//        for (int i = 0; i < 6; i++) {
+//            if (QuizPagerAdapter.userAnswers.get(questionNumber).equals(QuizFragmentContainer.answers.get(questionNumber))) {
+//                localScore++;
+//            }
+//        }
 
         //Log.d("updatescore", Integer.toString(localScore));
-        QuizPagerAdapter.score = localScore;
+       // QuizPagerAdapter.score = localScore;
     }
 
     @Override
@@ -146,7 +157,7 @@ public class QuizFragment extends Fragment {
 //        radioButton2.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 2] );
 //        radioButton3.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 3] );
 
-        updateScore();
+       // updateScore();
         //Log.d("whichstate", Integer.toString(whichState));
 
 
@@ -159,19 +170,19 @@ public class QuizFragment extends Fragment {
                 //    pager.setUserInputEnabled(true);
                 //}
 
-                if (i == 2131231209){
+                if (i == R.id.radioButton){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(0));
 //                    QuizPagerAdapter.answers[questionNumber] = 1;
 //                    if (answers != null) {
 //                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
 //                    }
-                } else if (i == 2131231210){
+                } else if (i == R.id.radioButton2){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(1));
 //                    QuizPagerAdapter.answers[questionNumber] = 2;
 //                    if (answers != null) {
 //                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
 //                    }
-                } else if (i == 2131231211){
+                } else if (i == R.id.radioButton3){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(2));
 //                    QuizPagerAdapter.answers[questionNumber] = 3;
 //                    if (answers != null) {
@@ -181,21 +192,21 @@ public class QuizFragment extends Fragment {
 
                 updateScore();
                 //Log.d("whichstate", Integer.toString(whichState));
-                if (questionNumber > 0){
-                    results = (TextView)getActivity().findViewById(R.id.results);
-
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    System.out.println(dtf.format(now));
-                    String time = dtf.format(now);
-
-                    if (results != null){
-                        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
-                    }
-
-                    //Log.d("quizpageadapterscore", Integer.toString(QuizPagerAdapter.score));
-                    //Log.d("checkedchangeSettext", (String) results.getText());
-                }
+//                if (questionNumber > 0){
+//                    results = (TextView)getActivity().findViewById(R.id.results);
+//
+//                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+//                    LocalDateTime now = LocalDateTime.now();
+//                    System.out.println(dtf.format(now));
+//                    String time = dtf.format(now);
+//
+//                    if (results != null){
+//                        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
+//                    }
+//
+//                    //Log.d("quizpageadapterscore", Integer.toString(QuizPagerAdapter.score));
+//                    //Log.d("checkedchangeSettext", (String) results.getText());
+//                }
             }
         });
 
