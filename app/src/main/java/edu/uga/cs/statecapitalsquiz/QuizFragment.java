@@ -50,6 +50,7 @@ public class QuizFragment extends Fragment {
     private RadioButton radioButton;
     private RadioButton radioButton2;
     private RadioButton radioButton3;
+    private QuizzesData quizzesData;
 //    private int[] answers;
 //
 //    private int whichState;
@@ -134,7 +135,28 @@ public class QuizFragment extends Fragment {
         if (firstTimeLoading) {
             displayCorrectOrIncorrect();
         }
+//        if(quizzesData != null && !quizzesData.isDBOpen()) {
+//            quizzesData.open();
+//        }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //new QuizDBUpdater().execute();
+    }
+//
+//    public class QuizDBUpdater extends AsyncTask<Void, Void> {
+//        @Override
+//        protected Void doInBackground(Void... arguments) {
+//            quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, "", QuizPagerAdapter.score, questionNumber);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void unused) {
+//        }
+//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -172,6 +194,8 @@ public class QuizFragment extends Fragment {
         if (pager != null){
             pager.setUserInputEnabled(false);
         }
+        quizzesData = new QuizzesData(getActivity());
+        quizzesData.open();
 
         results = (TextView)getActivity().findViewById(R.id.results);
         question = view.findViewById( R.id.textView2 );
