@@ -47,13 +47,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d( DEBUG_TAG, "onclick, review button" );
     }
 
-    public final void activatePager() {
-        ViewPager2 pager = findViewById( R.id.viewPager );
-        //QuizPagerAdapter qAdapter = new QuizPagerAdapter( getFragmentManager(), getLifecycle() );
-        //pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
-        //pager.setAdapter( qAdapter );
-    }
-
     public void setUpInitialData() {
         if (questionsData != null) {
             questionsData.open();
@@ -74,19 +67,6 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
 
-        }
-    }
-
-    class ButtonClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View view) {
-            if (view.getId() == R.id.button ) {
-                //Fragment fragment = new QuizFragment();
-                //FragmentManager fragmentManager = getSupportFragmentManager();
-                //fragmentManager.beginTransaction().replace( R.id.fragmentContainerView, fragment).addToBackStack("main screen" ).commit();
-                //
-            }
         }
     }
 

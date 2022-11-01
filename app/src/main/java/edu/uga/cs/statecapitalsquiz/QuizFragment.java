@@ -30,15 +30,6 @@ import java.util.Collections;
 
 public class QuizFragment extends Fragment {
 
-//    private static final String[] statesAndCapitalss = {
-//            "Alabama", "Montgomery", "birmingham", "Auburn",
-//            "Alaska", "Juneau", "anchorage", "Fairbanks",
-//            "Arizona", "phonenic", "Tucson", "scottsdale",
-//            "arkanasas", "little rock", "hot springs", "bentonville",
-//            "californa", "sacramento", "los angeles", "san diego",
-//            "colorado", "denver", "boulder", "aspen"
-//    };
-
     private ArrayList<String> answerChoices;
     private int questionNumber;
     private boolean hasSelectedCorrectAnswer = false;
@@ -51,21 +42,10 @@ public class QuizFragment extends Fragment {
     private RadioButton radioButton2;
     private RadioButton radioButton3;
     private QuizzesData quizzesData;
-//    private int[] answers;
-//
-//    private int whichState;
 
     public QuizFragment() {
 
     }
-
-//    public static QuizFragment newInstance( int stateNum ) {
-//        QuizFragment fragment = new QuizFragment();
-//        Bundle args = new Bundle();
-//        args.putInt( "stateNum", stateNum);
-//        fragment.setArguments( args );
-//        return fragment;
-//    }
 
     public static QuizFragment newInstance( int questionNumber ) {
         QuizFragment fragment = new QuizFragment();
@@ -107,37 +87,14 @@ public class QuizFragment extends Fragment {
                 QuizPagerAdapter.score--;
             }
         }
-
-       // int localScore = 0;
-        //Log.d("answers", Arrays.toString(QuizPagerAdapter.answers));
-        //Log.d("rightanswers", Arrays.toString(rightAnswers));
-
-
-//        for (int i=0;i<6;i++){
-//            if (QuizPagerAdapter.answers[i] == QuizFragmentContainer.rightAnswers[i] ){
-//                localScore++;
-//            }
-//        }
-//        for (int i = 0; i < 6; i++) {
-//            if (QuizPagerAdapter.userAnswers.get(questionNumber).equals(QuizFragmentContainer.answers.get(questionNumber))) {
-//                localScore++;
-//            }
-//        }
-
-        //Log.d("updatescore", Integer.toString(localScore));
-       // QuizPagerAdapter.score = localScore;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //results = (TextView)getActivity().findViewById(R.id.results)
         if (firstTimeLoading) {
             displayCorrectOrIncorrect();
         }
-//        if(quizzesData != null && !quizzesData.isDBOpen()) {
-//            quizzesData.open();
-//        }
     }
 
     @Override
@@ -145,18 +102,6 @@ public class QuizFragment extends Fragment {
         super.onPause();
         //new QuizDBUpdater().execute();
     }
-//
-//    public class QuizDBUpdater extends AsyncTask<Void, Void> {
-//        @Override
-//        protected Void doInBackground(Void... arguments) {
-//            quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, "", QuizPagerAdapter.score, questionNumber);
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void unused) {
-//        }
-//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -183,13 +128,7 @@ public class QuizFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
-        //public void onActivityCreated(Bundle savedInstanceState) {
         super.onViewCreated( view, savedInstanceState );
-
-//        if (answers == null){
-//             answers = new int[]{0, 0, 0, 0, 0, 0};
-//        }
-
         ViewPager2 pager = view.findViewById( R.id.viewPager );
         if (pager != null){
             pager.setUserInputEnabled(false);
@@ -203,7 +142,6 @@ public class QuizFragment extends Fragment {
         radioButton2 = view.findViewById( R.id.radioButton2 );
         radioButton3 = view.findViewById( R.id.radioButton3 );
 
-        //question.setText( "What is the state capital of: " + QuizFragmentContainer.statesAndCapitals[whichState * 4] );
         question.setText("What is the state capital of: " + QuizFragmentContainer.the6Questions.get(questionNumber).getStateName());
 
         if (savedInstanceState == null) {
@@ -212,83 +150,28 @@ public class QuizFragment extends Fragment {
             answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
             answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
             Collections.shuffle(answerChoices);
-//            radioButton.setText(answerChoices.get(0));
-//            radioButton2.setText(answerChoices.get(1));
-//            radioButton3.setText(answerChoices.get(2));
         }
         radioButton.setText(answerChoices.get(0));
         radioButton2.setText(answerChoices.get(1));
         radioButton3.setText(answerChoices.get(2));
 
-//        radioButton.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 1] );
-//        radioButton2.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 2] );
-//        radioButton3.setText( QuizFragmentContainer.statesAndCapitals[whichState * 4 + 3] );
-
-       // updateScore();
-        //Log.d("whichstate", Integer.toString(whichState));
-
-
         RadioGroup radioGroup = (RadioGroup) view.findViewById( R.id.radioGroup );
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                //ViewPager2 pager = view.findViewById( R.id.viewPager );
-                //if (pager != null){
-                //    pager.setUserInputEnabled(true);
-                //}
-
                 if (i == R.id.radioButton){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(0));
                     selectedAnswer = answerChoices.get(0);
-//                    QuizPagerAdapter.answers[questionNumber] = 1;
-//                    if (answers != null) {
-//                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
-//                    }
                 } else if (i == R.id.radioButton2){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(1));
                     selectedAnswer = answerChoices.get(1);
-//                    QuizPagerAdapter.answers[questionNumber] = 2;
-//                    if (answers != null) {
-//                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
-//                    }
                 } else if (i == R.id.radioButton3){
                     QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(2));
                     selectedAnswer = answerChoices.get(2);
-//                    QuizPagerAdapter.answers[questionNumber] = 3;
-//                    if (answers != null) {
-//                        //Log.d("Quizfragmnet", Arrays.toString(QuizPagerAdapter.answers));
-//                    }
                 }
 
                 updateScore();
-                //Log.d("whichstate", Integer.toString(whichState));
-//                if (questionNumber > 0){
-//                    results = (TextView)getActivity().findViewById(R.id.results);
-//
-//                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-//                    LocalDateTime now = LocalDateTime.now();
-//                    System.out.println(dtf.format(now));
-//                    String time = dtf.format(now);
-//
-//                    if (results != null){
-//                        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "Time: " + time);
-//                    }
-//
-//                    //Log.d("quizpageadapterscore", Integer.toString(QuizPagerAdapter.score));
-//                    //Log.d("checkedchangeSettext", (String) results.getText());
-//                }
             }
         });
-
-
-
-
     }
-
-
-
-
-
-
-
 }

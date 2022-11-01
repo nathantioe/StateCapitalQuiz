@@ -34,24 +34,8 @@ public class QuizFragmentContainer extends Fragment {
     ViewPager2 pager;
     QuizPagerAdapter qAdapter;
 
-    //private static ArrayList<Question> questions = new ArrayList<>(); // ** note, use the6Questions ArrayList instead?
-    //public static int[] rightAnswers = {0,0,0,0,0,0}; // ** note, use answers ArrayList instead? See added variables
-    //public int hej = 1;
-
     boolean getsRotated = false;
 
-//    public static final String[] statesAndCapitals = {
-//            "Alabama", "Montgomery", "birmingham", "Auburn",
-//            "Alaska", "Juneau", "anchorage", "Fairbanks",
-//            "Arizona", "phonenic", "Tucson", "scottsdale",
-//            "arkanasas", "little rock", "hot springs", "bentonville",
-//            "californa", "sacramento", "los angeles", "san diego",
-//            "colorado", "denver", "boulder", "aspen"
-//    };
-
-    /** ADDED VARIABLES from Nathan */
-    // the6Questions list will be populated with 6 questions that are randomly ordered
-    // The question numbers are random, but you still may need to reorder the answer choices
     public static ArrayList<Question> the6Questions = new ArrayList<>();
 
     // answers will contain list of string of the answers/capital cities
@@ -65,34 +49,13 @@ public class QuizFragmentContainer extends Fragment {
     public static ArrayList<Question> all50Questions;
     public static long currentQuizID = -1;
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public QuizFragmentContainer() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QuizFragmentContainer.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static QuizFragmentContainer newInstance(String param1, String param2) {
+    public static QuizFragmentContainer newInstance() {
         QuizFragmentContainer fragment = new QuizFragmentContainer();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -100,18 +63,11 @@ public class QuizFragmentContainer extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         if (savedInstanceState != null){
             answers = savedInstanceState.getStringArrayList("answers");
             all50Questions = savedInstanceState.getParcelableArrayList("all50Questions");
             the6Questions = savedInstanceState.getParcelableArrayList("the6Questions");
             currentQuizID = savedInstanceState.getLong("currentQuizID");
-            //rightAnswers = savedInstanceState.getIntArray("rightAnswers");
-            //questions = savedInstanceState.getParcelableArrayList("questions");
             getsRotated = true;
         }
 
@@ -142,103 +98,18 @@ public class QuizFragmentContainer extends Fragment {
             new QuestionDBReader().execute();
         }
 
-        /** */
-
-        //here the database should give a list question on the same structure as below,
-        // this code will then scrable the answers and keep track of the score.
-
         if (getsRotated == false){
 
-            /** No longer needed?? */
-//            questions.add(new Question("Alabama", "Montgomery", "birmingham", "Auburn"));
-//            questions.add(new Question("Alaska", "Juneau", "anchorage", "Fairbanks"));
-//            questions.add(new Question("Arizona", "phonenic", "Tucson", "scottsdale"));
-//            questions.add(new Question("arkanasas", "little rock", "hot springs", "bentonville"));
-//            questions.add(new Question("californa", "sacramento", "los angeles", "san diego"));
-//            questions.add(new Question("colorado", "denver", "boulder", "aspen"));
-
-
-            /**
-             * Was a little confused here.
-             * Is this shuffling the question order, or is it shuffling the answer choices the user sees?
-             * Had to comment it out for the code to work*/
-//            for (int i=0;i<6;i++){
-//                int random_int = (int)Math.floor(Math.random()*(6));
-//                Log.d("random int", Integer.toString(random_int));
-//                if (random_int == 0){
-//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-//                    statesAndCapitals[i*4 + 1] = questions.get(i).getCapitalCity();
-//                    statesAndCapitals[i*4 + 2] = questions.get(i).getSecondCity();
-//                    statesAndCapitals[i*4 + 3] = questions.get(i).getThirdCity();
-//                    rightAnswers[i] = 1;
-//                } else if (random_int == 1){
-//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-//                    statesAndCapitals[i*4 + 1] = questions.get(i).getCapitalCity();
-//                    statesAndCapitals[i*4 + 2] = questions.get(i).getThirdCity();
-//                    statesAndCapitals[i*4 + 3] = questions.get(i).getSecondCity();
-//                    rightAnswers[i] = 1;
-//                } else if (random_int == 2){
-//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-//                    statesAndCapitals[i*4 + 1] = questions.get(i).getSecondCity();
-//                    statesAndCapitals[i*4 + 2] = questions.get(i).getCapitalCity();
-//                    statesAndCapitals[i*4 + 3] = questions.get(i).getThirdCity();
-//                    rightAnswers[i] = 2;
-//                } else if (random_int == 3){
-//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-//                    statesAndCapitals[i*4 + 1] = questions.get(i).getThirdCity();
-//                    statesAndCapitals[i*4 + 2] = questions.get(i).getCapitalCity();
-//                    statesAndCapitals[i*4 + 3] = questions.get(i).getSecondCity();
-//                    rightAnswers[i] = 2;
-//                } else if (random_int == 4){
-//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-//                    statesAndCapitals[i*4 + 1] = questions.get(i).getSecondCity();
-//                    statesAndCapitals[i*4 + 2] = questions.get(i).getThirdCity();
-//                    statesAndCapitals[i*4 + 3] = questions.get(i).getCapitalCity();
-//                    rightAnswers[i] = 3;
-//                } else if (random_int == 5){
-//                    statesAndCapitals[i*4] = questions.get(i).getStateName();
-//                    statesAndCapitals[i*4 + 1] = questions.get(i).getThirdCity();
-//                    statesAndCapitals[i*4 + 2] = questions.get(i).getSecondCity();
-//                    statesAndCapitals[i*4 + 3] = questions.get(i).getCapitalCity();
-//                    rightAnswers[i] = 3;
-//                }
-//
-//            }
         }
-
-
-        //Log.d("states and capitals", Arrays.toString(statesAndCapitals));
-        //Log.d("right answers", Arrays.toString(rightAnswers));
-
-//        pager.setOffscreenPageLimit(8);
-//        qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
-//        pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
-//        pager.setAdapter( qAdapter );
-        //pager.setUserInputEnabled(false);
-
-
-
-
-        //pager.setUserInputEnabled(false);
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
-
         savedInstanceState.putStringArrayList("answers", answers);
         savedInstanceState.putParcelableArrayList("all50Questions", all50Questions);
         savedInstanceState.putParcelableArrayList("the6Questions", the6Questions);
         savedInstanceState.putLong("currentQuizID", currentQuizID);
-
-        //savedInstanceState.putIntArray("rightAnswers", rightAnswers);
-        //savedInstanceState.putParcelableArrayList("questions", (ArrayList<? extends Parcelable>) questions);
-
-        // etc.
     }
 
     /** ADDED FUNCTIONS BELOW by Nathan */

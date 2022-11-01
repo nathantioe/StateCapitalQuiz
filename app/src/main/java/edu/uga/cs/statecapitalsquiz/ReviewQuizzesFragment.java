@@ -24,65 +24,23 @@ import kotlin.collections.ArrayDeque;
  */
 public class ReviewQuizzesFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-
     private RecyclerView recyclerView;
     private QuizRecyclerAdapter recyclerAdapter;
-    //private QuizzesData QuizData = null; //???
     private ArrayList<Quiz> quizList = new ArrayList<>();
     private QuizzesData quizzesData;
-
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public ReviewQuizzesFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReviewQuizzesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ReviewQuizzesFragment newInstance() {
         ReviewQuizzesFragment fragment = new ReviewQuizzesFragment();
-        //Bundle args = new Bundle();
-        //args.putString(ARG_PARAM1, param1);
-        //args.putString(ARG_PARAM2, param2);
-        //fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            //mParam1 = getArguments().getString(ARG_PARAM1);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-//
-//        quizList.add(new Quiz("7 oktober", 111, 111, 111, 111, 111, 111, 3, 111));
-//        quizList.add(new Quiz("8 oktober", 111, 111, 111, 111, 111, 111, 5, 111));
-//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-//        quizList.add(new Quiz("10 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-//        quizList.add(new Quiz("11 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-//        quizList.add(new Quiz("12 oktober", 111, 111, 111, 111, 111, 111, 44, 111));quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 2, 111));
-//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 3, 111));
-//        quizList.add(new Quiz("9 oktober", 111, 111, 111, 111, 111, 111, 4, 111));
-
     }
 
     @Override
@@ -99,10 +57,6 @@ public class ReviewQuizzesFragment extends Fragment {
         recyclerView = getView().findViewById( R.id.recyclerview );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getActivity() );
         recyclerView.setLayoutManager( layoutManager );
-
-        /** Moved to AsyncTask */
-//        recyclerAdapter = new QuizRecyclerAdapter( getActivity(), quizList );
-//        recyclerView.setAdapter( recyclerAdapter );
 
         quizzesData = new QuizzesData( getActivity() );
         quizzesData.open();

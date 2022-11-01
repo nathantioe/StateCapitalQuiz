@@ -15,10 +15,8 @@ import java.util.Arrays;
 
 public class QuizPagerAdapter extends FragmentStateAdapter {
 
-    //public static int[] answers = {0, 0, 0, 0, 0, 0};
     public static ArrayList<String> userAnswers = new ArrayList<>();
     public static int score = 0;
-    //public static boolean quizComplete = false;
 
     public QuizPagerAdapter(FragmentManager fragmentManager,
                             Lifecycle lifecycle){
@@ -31,7 +29,6 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
         for (int i = 0; i < 6; i++) {
             userAnswers.add("");
         }
-        //quizComplete = false;
         score = 0;
     }
 
@@ -41,7 +38,6 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
         if (position == 6){
 
             Log.d("Quizpageradapter", Integer.toString(score) + "scoree");
-            //quizComplete = true;
             return QuizDoneFragment.newInstance(score);
 
         }
