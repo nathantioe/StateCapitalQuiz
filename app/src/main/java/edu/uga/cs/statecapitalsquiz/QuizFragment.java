@@ -43,6 +43,7 @@ public class QuizFragment extends Fragment {
     private int questionNumber;
     private boolean hasSelectedCorrectAnswer = false;
     private String selectedAnswer = "";
+    private boolean firstTimeLoading = true;
 
     private TextView question;
     private TextView results;
@@ -83,6 +84,7 @@ public class QuizFragment extends Fragment {
             questionNumber = savedInstanceState.getInt("questionNumber");
             answerChoices = savedInstanceState.getStringArrayList("answerChoices");
             selectedAnswer = savedInstanceState.getString("selectedAnswer");
+            firstTimeLoading = savedInstanceState.getBoolean("firstTimeLoading");
             QuizPagerAdapter.userAnswers.set(questionNumber, selectedAnswer);
         }
     }
@@ -128,8 +130,10 @@ public class QuizFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //results = (TextView)getActivity().findViewById(R.id.results);
-        displayCorrectOrIncorrect();
+        //results = (TextView)getActivity().findViewById(R.id.results)
+        if (firstTimeLoading) {
+            displayCorrectOrIncorrect();
+        }
     }
 
     @Override
@@ -138,6 +142,7 @@ public class QuizFragment extends Fragment {
         outState.putInt("questionNumber", questionNumber);
         outState.putStringArrayList("answerChoices", answerChoices);
         outState.putString("selectedAnswer", selectedAnswer);
+        outState.putBoolean("firstTimeLoading", firstTimeLoading);
     }
 
     public void displayCorrectOrIncorrect() {
@@ -150,6 +155,7 @@ public class QuizFragment extends Fragment {
             }
             Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
             toast.show();
+            firstTimeLoading = false;
         }
     }
 
