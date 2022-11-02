@@ -33,7 +33,9 @@ public class QuizFragment extends Fragment {
     private ArrayList<String> answerChoices;
     private int questionNumber;
     private boolean hasSelectedCorrectAnswer = false;
+    private boolean alreadySelectedAnswer = false;
     private boolean firstTimeLoading = true;
+    private boolean restarted = false;
 
     private TextView question;
     private TextView results;
@@ -65,6 +67,7 @@ public class QuizFragment extends Fragment {
             answerChoices = savedInstanceState.getStringArrayList("answerChoices");
             firstTimeLoading = savedInstanceState.getBoolean("firstTimeLoading");
             hasSelectedCorrectAnswer = savedInstanceState.getBoolean("hasSelectedCorrectAnswer");
+            //restarted = savedInstanceState.getBoolean("restarted");
         }
     }
 
@@ -83,6 +86,7 @@ public class QuizFragment extends Fragment {
         } else {
             if (hasSelectedCorrectAnswer) {
                 QuizFragmentContainer.score--;
+                hasSelectedCorrectAnswer = false;
             }
         }
     }
@@ -102,6 +106,9 @@ public class QuizFragment extends Fragment {
     public void onPause() {
         super.onPause();
         new QuizDBUpdater().execute();
+        if(quizzesData != null && !quizzesData.isDBOpen()) {
+            quizzesData.close();
+        }
     }
 
     public class QuizDBUpdater extends AsyncTask<Void, Void> {
@@ -124,6 +131,7 @@ public class QuizFragment extends Fragment {
         outState.putStringArrayList("answerChoices", answerChoices);
         outState.putBoolean("hasSelectedCorrectAnswer", hasSelectedCorrectAnswer);
         outState.putBoolean("firstTimeLoading", firstTimeLoading);
+        //outState.putBoolean("restarted", true);
     }
 
     public void displayCorrectOrIncorrect(int questionNumber) {
@@ -159,11 +167,14 @@ public class QuizFragment extends Fragment {
         radioButton3 = view.findViewById( R.id.radioButton3 );
 
         question.setText("What is the state capital of: " + QuizFragmentContainer.the6Questions.get(questionNumber).getStateName());
-        answerChoices = new ArrayList<>();
-        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity());
-        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
-        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
-        Collections.shuffle(answerChoices);
+
+        if (savedInstanceState == null) {
+            answerChoices = new ArrayList<>();
+            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity());
+            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
+            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
+            Collections.shuffle(answerChoices);
+        }
 
         radioButton.setText(answerChoices.get(0));
         radioButton2.setText(answerChoices.get(1));
@@ -185,6 +196,12 @@ public class QuizFragment extends Fragment {
                 }
 
                 updateScore();
+//                if (!restarted) {
+//                    updateScore();
+//                } else {
+//                    restarted = false;
+//                }
+
             }
         });
     }

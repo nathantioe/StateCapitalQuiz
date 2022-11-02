@@ -111,12 +111,12 @@ public class QuizFragmentContainer extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(questionsData != null) {
-            questionsData.close();
-        }
-        if(quizzesData != null) {
-            quizzesData.close();
-        }
+//        if(questionsData != null) {
+//            questionsData.close();
+//        }
+//        if(quizzesData != null) {
+//            quizzesData.close();
+//        }
     }
 
     /** AsyncTask for reading Questions from DB */
