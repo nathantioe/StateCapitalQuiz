@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class QuestionsData {
@@ -118,6 +119,16 @@ public class QuestionsData {
         }
         // return a list of retrieved questions
         return questions;
+    }
+
+    public ArrayList<Question> generate6QuizQuestions() {
+        ArrayList<Question> allQuestions = retrieveAllQuestions();
+        Collections.shuffle(allQuestions);
+        ArrayList<Question> list = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            list.add(allQuestions.get(i));
+        }
+        return list;
     }
 
     public void storeQuestion(Question question) {

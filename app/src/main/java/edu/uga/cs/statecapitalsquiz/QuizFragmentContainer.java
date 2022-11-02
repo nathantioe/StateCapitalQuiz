@@ -31,23 +31,14 @@ import java.util.WeakHashMap;
 public class QuizFragmentContainer extends Fragment {
 
 
-    ViewPager2 pager;
-    QuizPagerAdapter qAdapter;
-
-    boolean getsRotated = false;
-
-    public static ArrayList<Question> the6Questions = new ArrayList<>();
-
-    // answers will contain list of string of the answers/capital cities
-    public static ArrayList<String> answers = new ArrayList<>();
-
-    // classes to help read/store questions/quizzes
+    private ViewPager2 pager;
+    private QuizPagerAdapter qAdapter;
     private QuestionsData questionsData = null;
     private QuizzesData quizzesData = null;
-
-    // save list of 50 questions so that we don't need to retrieve it again from db
-    public static ArrayList<Question> all50Questions;
+    public static ArrayList<Question> the6Questions = new ArrayList<>(6);
+    public static ArrayList<String> userAnswers = new ArrayList<>(6);
     public static long currentQuizID = -1;
+    public static int score = 0;
 
     public QuizFragmentContainer() {
         // Required empty public constructor
@@ -55,8 +46,6 @@ public class QuizFragmentContainer extends Fragment {
 
     public static QuizFragmentContainer newInstance() {
         QuizFragmentContainer fragment = new QuizFragmentContainer();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -64,13 +53,11 @@ public class QuizFragmentContainer extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null){
-            answers = savedInstanceState.getStringArrayList("answers");
-            all50Questions = savedInstanceState.getParcelableArrayList("all50Questions");
+            userAnswers = savedInstanceState.getStringArrayList("userAnswers");
             the6Questions = savedInstanceState.getParcelableArrayList("the6Questions");
             currentQuizID = savedInstanceState.getLong("currentQuizID");
-            getsRotated = true;
+            score = savedInstanceState.getInt("score");
         }
-
     }
 
     @Override
@@ -82,33 +69,29 @@ public class QuizFragmentContainer extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
-
-        /** Added by Nathan */
         questionsData = new QuestionsData(getActivity());
         quizzesData = new QuizzesData(getActivity());
         questionsData.open();
         quizzesData.open();
         pager = view.findViewById( R.id.viewPager );
+
         if (savedInstanceState != null) {
             pager.setOffscreenPageLimit(8);
             qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
             pager.setOrientation( ViewPager2.ORIENTATION_HORIZONTAL );
             pager.setAdapter( qAdapter );
         } else {
-            new QuestionDBReader().execute();
-        }
-
-        if (getsRotated == false){
-
+            setUpQuiz();
+            new QuizQuestionGenerator().execute();
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putStringArrayList("answers", answers);
-        savedInstanceState.putParcelableArrayList("all50Questions", all50Questions);
         savedInstanceState.putParcelableArrayList("the6Questions", the6Questions);
+        savedInstanceState.putStringArrayList("userAnswers", userAnswers);
+        savedInstanceState.putInt("score", score);
         savedInstanceState.putLong("currentQuizID", currentQuizID);
     }
 
@@ -137,21 +120,17 @@ public class QuizFragmentContainer extends Fragment {
     }
 
     /** AsyncTask for reading Questions from DB */
-    public class QuestionDBReader extends AsyncTask<Void, ArrayList<Question>> {
+    public class QuizQuestionGenerator extends AsyncTask<Void, ArrayList<Question>> {
 
         @Override
         protected ArrayList<Question> doInBackground( Void... params ) {
-            // retrieve all the questions from database
-            ArrayList<Question> questions = questionsData.retrieveAllQuestions();
-            return questions;
+            return questionsData.generate6QuizQuestions();
         }
 
         @Override
-        protected void onPostExecute( ArrayList<Question> allQuestions ) {
-            // when all the questions have been retrieved from database, process them
-            setUpQuestions(allQuestions);
-            all50Questions = allQuestions;
-            addQuizToDB();
+        protected void onPostExecute( ArrayList<Question> generatedQuestions ) {
+            addQuizToDB(generatedQuestions);
+            the6Questions = generatedQuestions;
 
             pager.setOffscreenPageLimit(8);
             qAdapter = new QuizPagerAdapter( getChildFragmentManager(), getLifecycle() );
@@ -160,39 +139,24 @@ public class QuizFragmentContainer extends Fragment {
         }
     }
 
-    /** helper method to set up the questions */
-    private void setUpQuestions(List<Question> allQuestions) {
-        List<Question> questions = allQuestions;
-        Collections.shuffle(questions); // shuffle the 50 questions
-        for (int i = 0; i < 6; i++) { // take the first 6 questions
-            the6Questions.add(questions.get(i)); // add to list of the 6 questions
-            answers.add(questions.get(i).getCapitalCity()); // add list of answers
-        }
-    }
-
-    public static void setUpForNewQuiz() {
+    public static void setUpQuiz() {
         the6Questions.clear();
-        answers.clear();
-        List<Question> questions = all50Questions;
-        Collections.shuffle(questions);
-        for (int i = 0; i < 6; i++) { // take the first 6 questions
-            the6Questions.add(questions.get(i)); // add to list of the 6 questions
-            answers.add(questions.get(i).getCapitalCity()); // add list of answers
+        userAnswers.clear();
+        for (int i = 0; i < 6; i++) {
+            userAnswers.add("");
         }
+        score = 0;
 
     }
 
-
-    /**Ignore the code below, this should be moved to the QuizDoneFragment **/
-    /** method to create quiz and add it to DB */
-    public void addQuizToDB() {
+    public void addQuizToDB(ArrayList<Question> questionList) {
         Quiz quiz = new Quiz("", // empty date
-                the6Questions.get(0).getId(), // q1
-                the6Questions.get(1).getId(), // q2
-                the6Questions.get(2).getId(), // q3
-                the6Questions.get(3).getId(), // q4
-                the6Questions.get(4).getId(), // q5
-                the6Questions.get(5).getId(), // q6
+                questionList.get(0).getId(), // q1
+                questionList.get(1).getId(), // q2
+                questionList.get(2).getId(), // q3
+                questionList.get(3).getId(), // q4
+                questionList.get(4).getId(), // q5
+                questionList.get(5).getId(), // q6
                 0, // result
                 0); // questions answered
         new QuizDBWriter().execute(quiz);

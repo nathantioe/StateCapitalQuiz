@@ -15,30 +15,16 @@ import java.util.Arrays;
 
 public class QuizPagerAdapter extends FragmentStateAdapter {
 
-    public static ArrayList<String> userAnswers = new ArrayList<>();
-    public static int score = 0;
-
     public QuizPagerAdapter(FragmentManager fragmentManager,
                             Lifecycle lifecycle){
         super( fragmentManager, lifecycle );
-        resetQuiz();
-    }
-
-    public static void resetQuiz() {
-        userAnswers.clear();
-        for (int i = 0; i < 6; i++) {
-            userAnswers.add("");
-        }
-        score = 0;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         if (position == 6){
-
-            Log.d("Quizpageradapter", Integer.toString(score) + "scoree");
-            return QuizDoneFragment.newInstance(score);
+            return QuizDoneFragment.newInstance();
 
         }
 

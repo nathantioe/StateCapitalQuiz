@@ -26,7 +26,6 @@ import java.util.Calendar;
  */
 public class QuizDoneFragment extends Fragment {
 
-    private int score;
     private QuizzesData quizzesData;
     private TextView results;
     private String time;
@@ -36,21 +35,14 @@ public class QuizDoneFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static QuizDoneFragment newInstance(int score) {
+    public static QuizDoneFragment newInstance() {
         QuizDoneFragment fragment = new QuizDoneFragment();
-        Bundle args = new Bundle();
-        args.putInt("score", score);
-        Log.d("quizdonefragmentcons", Integer.toString(score));
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            score = getArguments().getInt("score");
-        }
         if (savedInstanceState != null) {
             time = savedInstanceState.getString("time");
             alreadySetTime = savedInstanceState.getBoolean("alreadySetTime");
@@ -75,8 +67,7 @@ public class QuizDoneFragment extends Fragment {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QuizPagerAdapter.resetQuiz();
-                QuizFragmentContainer.setUpForNewQuiz();
+                QuizFragmentContainer.setUpQuiz();
                 getActivity().onBackPressed();
             }
         });
@@ -85,7 +76,7 @@ public class QuizDoneFragment extends Fragment {
     public class QuizDBUpdater extends AsyncTask<String, Void> {
         @Override
         protected Void doInBackground(String... time) {
-            quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, time[0], QuizPagerAdapter.score, 6);
+            quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, time[0], QuizFragmentContainer.score, 6);
             return null;
         }
 
@@ -115,7 +106,7 @@ public class QuizDoneFragment extends Fragment {
             new QuizDBUpdater().execute(time);
             alreadySetTime = true;
         }
-        results.setText("Score: " + QuizPagerAdapter.score + "/6 " + "\nTime: " + time);
+        results.setText("Score: " + QuizFragmentContainer.score + "/6 " + "\nTime: " + time);
     }
 
     @Override

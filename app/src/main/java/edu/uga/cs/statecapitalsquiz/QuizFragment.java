@@ -33,7 +33,6 @@ public class QuizFragment extends Fragment {
     private ArrayList<String> answerChoices;
     private int questionNumber;
     private boolean hasSelectedCorrectAnswer = false;
-    private String selectedAnswer = "";
     private boolean firstTimeLoading = true;
 
     private TextView question;
@@ -64,9 +63,8 @@ public class QuizFragment extends Fragment {
         if (savedInstanceState != null) {
             questionNumber = savedInstanceState.getInt("questionNumber");
             answerChoices = savedInstanceState.getStringArrayList("answerChoices");
-            selectedAnswer = savedInstanceState.getString("selectedAnswer");
             firstTimeLoading = savedInstanceState.getBoolean("firstTimeLoading");
-            QuizPagerAdapter.userAnswers.set(questionNumber, selectedAnswer);
+            hasSelectedCorrectAnswer = savedInstanceState.getBoolean("hasSelectedCorrectAnswer");
         }
     }
 
@@ -78,13 +76,13 @@ public class QuizFragment extends Fragment {
     }
 
     public void updateScore(){
-        // TODO: Fix scoring system, not properly updating in the Done screen
-        if (QuizPagerAdapter.userAnswers.get(questionNumber).equals(QuizFragmentContainer.answers.get(questionNumber))) {
+        if (QuizFragmentContainer.userAnswers.get(questionNumber)
+                .equals(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity())) {
             hasSelectedCorrectAnswer = true;
-            QuizPagerAdapter.score++;
+            QuizFragmentContainer.score++;
         } else {
             if (hasSelectedCorrectAnswer) {
-                QuizPagerAdapter.score--;
+                QuizFragmentContainer.score--;
             }
         }
     }
@@ -92,15 +90,31 @@ public class QuizFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(quizzesData != null && !quizzesData.isDBOpen()) {
+            quizzesData.open();
+        }
         if (firstTimeLoading) {
-            displayCorrectOrIncorrect();
+            displayCorrectOrIncorrect(questionNumber);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //new QuizDBUpdater().execute();
+        new QuizDBUpdater().execute();
+    }
+
+    public class QuizDBUpdater extends AsyncTask<Void, Void> {
+        @Override
+        protected Void doInBackground(Void... arguments) {
+            quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, "", QuizFragmentContainer.score, questionNumber);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+
+        }
     }
 
     @Override
@@ -108,22 +122,24 @@ public class QuizFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("questionNumber", questionNumber);
         outState.putStringArrayList("answerChoices", answerChoices);
-        outState.putString("selectedAnswer", selectedAnswer);
+        outState.putBoolean("hasSelectedCorrectAnswer", hasSelectedCorrectAnswer);
         outState.putBoolean("firstTimeLoading", firstTimeLoading);
     }
 
-    public void displayCorrectOrIncorrect() {
-        if (questionNumber >= 1) {
-            String text = "";
-            if (QuizPagerAdapter.userAnswers.get(questionNumber - 1).equals(QuizFragmentContainer.answers.get(questionNumber - 1))) {
-                text = "Correct!";
-            } else {
-                text = "Incorrect!";
-            }
-            Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
-            toast.show();
-            firstTimeLoading = false;
+    public void displayCorrectOrIncorrect(int questionNumber) {
+        String text = "";
+        if (questionNumber == 0) {
+            return;
         }
+        if (QuizFragmentContainer.userAnswers.get(questionNumber - 1)
+                .equals(QuizFragmentContainer.the6Questions.get(questionNumber - 1).getCapitalCity())) {
+            text = "Correct!";
+        } else {
+            text = "Incorrect!";
+        }
+        Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
+        toast.show();
+        firstTimeLoading = false;
     }
 
     @Override
@@ -143,14 +159,12 @@ public class QuizFragment extends Fragment {
         radioButton3 = view.findViewById( R.id.radioButton3 );
 
         question.setText("What is the state capital of: " + QuizFragmentContainer.the6Questions.get(questionNumber).getStateName());
+        answerChoices = new ArrayList<>();
+        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity());
+        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
+        answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
+        Collections.shuffle(answerChoices);
 
-        if (savedInstanceState == null) {
-            answerChoices = new ArrayList<>();
-            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity());
-            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getSecondCity());
-            answerChoices.add(QuizFragmentContainer.the6Questions.get(questionNumber).getThirdCity());
-            Collections.shuffle(answerChoices);
-        }
         radioButton.setText(answerChoices.get(0));
         radioButton2.setText(answerChoices.get(1));
         radioButton3.setText(answerChoices.get(2));
@@ -160,14 +174,14 @@ public class QuizFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if (i == R.id.radioButton){
-                    QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(0));
-                    selectedAnswer = answerChoices.get(0);
+                    QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(0));
+                    //selectedAnswer = answerChoices.get(0);
                 } else if (i == R.id.radioButton2){
-                    QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(1));
-                    selectedAnswer = answerChoices.get(1);
+                    QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(1));
+                    //selectedAnswer = answerChoices.get(1);
                 } else if (i == R.id.radioButton3){
-                    QuizPagerAdapter.userAnswers.set(questionNumber, answerChoices.get(2));
-                    selectedAnswer = answerChoices.get(2);
+                    QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(2));
+                    //selectedAnswer = answerChoices.get(2);
                 }
 
                 updateScore();
