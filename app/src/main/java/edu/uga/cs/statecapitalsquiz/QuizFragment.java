@@ -30,12 +30,13 @@ import java.util.Collections;
 
 public class QuizFragment extends Fragment {
 
+    private boolean changedOrientation = false;
+
     private ArrayList<String> answerChoices;
     private int questionNumber;
     private boolean hasSelectedCorrectAnswer = false;
     private boolean alreadySelectedAnswer = false;
     private boolean firstTimeLoading = true;
-    private boolean restarted = false;
 
     private TextView question;
     private TextView results;
@@ -67,7 +68,7 @@ public class QuizFragment extends Fragment {
             answerChoices = savedInstanceState.getStringArrayList("answerChoices");
             firstTimeLoading = savedInstanceState.getBoolean("firstTimeLoading");
             hasSelectedCorrectAnswer = savedInstanceState.getBoolean("hasSelectedCorrectAnswer");
-            //restarted = savedInstanceState.getBoolean("restarted");
+            changedOrientation = savedInstanceState.getBoolean("changedOrientation");
         }
     }
 
@@ -131,7 +132,7 @@ public class QuizFragment extends Fragment {
         outState.putStringArrayList("answerChoices", answerChoices);
         outState.putBoolean("hasSelectedCorrectAnswer", hasSelectedCorrectAnswer);
         outState.putBoolean("firstTimeLoading", firstTimeLoading);
-        //outState.putBoolean("restarted", true);
+        outState.putBoolean("changedOrientation", true);
     }
 
     public void displayCorrectOrIncorrect(int questionNumber) {
@@ -184,24 +185,20 @@ public class QuizFragment extends Fragment {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                if (i == R.id.radioButton){
-                    QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(0));
-                    //selectedAnswer = answerChoices.get(0);
-                } else if (i == R.id.radioButton2){
-                    QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(1));
-                    //selectedAnswer = answerChoices.get(1);
-                } else if (i == R.id.radioButton3){
-                    QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(2));
-                    //selectedAnswer = answerChoices.get(2);
+                if (!changedOrientation || QuizFragmentContainer.userAnswers.get(questionNumber).equals("")) {
+                    if (i == R.id.radioButton) {
+                        QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(0));
+                        //selectedAnswer = answerChoices.get(0);
+                    } else if (i == R.id.radioButton2) {
+                        QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(1));
+                        //selectedAnswer = answerChoices.get(1);
+                    } else if (i == R.id.radioButton3) {
+                        QuizFragmentContainer.userAnswers.set(questionNumber, answerChoices.get(2));
+                        //selectedAnswer = answerChoices.get(2);
+                    }
+                    updateScore();
                 }
-
-                updateScore();
-//                if (!restarted) {
-//                    updateScore();
-//                } else {
-//                    restarted = false;
-//                }
-
+                changedOrientation = false;
             }
         });
     }
