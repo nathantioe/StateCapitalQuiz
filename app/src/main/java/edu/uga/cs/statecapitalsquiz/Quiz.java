@@ -19,6 +19,7 @@ public class Quiz {
     private long result;
     private long questions_answered;
 
+
     public Quiz()
     {
         this.id = -1;
@@ -33,6 +34,18 @@ public class Quiz {
         this.questions_answered = -1;
     }
 
+    /**
+     *
+     * @param date
+     * @param question_1
+     * @param question_2
+     * @param question_3
+     * @param question_4
+     * @param question_5
+     * @param question_6
+     * @param result
+     * @param questions_answered
+     */
     public Quiz( String date, long question_1, long question_2, long question_3,
                  long question_4, long question_5, long question_6,
                  long result, long questions_answered) {
@@ -145,6 +158,11 @@ public class Quiz {
 
     public void setQuestionsAnswered(long val) { this.questions_answered = val; }
 
+    /**
+     * Converts quiz to appropriate string
+     *
+     * @return
+     */
     public String toString()
     {
         return id + ": " + date  + " " + question_1 + " " + question_2

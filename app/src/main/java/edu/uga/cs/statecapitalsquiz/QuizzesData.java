@@ -17,7 +17,8 @@ public class QuizzesData {
 
     public static final String DEBUG_TAG = "QuizzesData";
 
-    // this is a reference to our database; it is used later to run SQL commands
+    //This is a reference to our database; it is used later to run SQL commands
+
     private SQLiteDatabase db;
     private SQLiteOpenHelper dbHelper;
 
@@ -38,13 +39,17 @@ public class QuizzesData {
         this.dbHelper = DBHelper.getInstance( context );
     }
 
-    // Open the database
+    /**
+     * Open the database
+     */
     public void open() {
         db = dbHelper.getWritableDatabase();
         Log.d( DEBUG_TAG, "QuizzesData: db open" );
     }
 
-    // Close the database
+    /**
+     * Close the database
+     */
     public void close() {
         if( dbHelper != null ) {
             dbHelper.close();
@@ -52,14 +57,22 @@ public class QuizzesData {
         }
     }
 
+    /**
+     *
+     * @return Boolean
+     */
     public boolean isDBOpen()
     {
         return db.isOpen();
     }
 
-    // Retrieve all quizzes and return them as a List.
-    // This is how we restore persistent objects stored as rows in the job leads table in the database.
-    // For each retrieved row, we create a new Quiz (Java POJO object) instance and add it to the list.
+    /**
+     * Retrieve all quizzes and return them as a List.
+     * This is how we restore persistent objects stored as rows in the job leads table in the database.
+     * For each retrieved row, we create a new Quiz (Java POJO object) instance and add it to the list.
+     *
+     * @return List<Quiz>
+     */
     public List<Quiz> retrieveAllQuizzes() {
         ArrayList<Quiz> quizzes = new ArrayList<>();
         Cursor cursor = null;
@@ -126,7 +139,12 @@ public class QuizzesData {
         return quizzes;
     }
 
-    // Store a new job lead in the database.
+    /**
+     * Store a new job lead in the database.
+     *
+     * @param quiz
+     * @return
+     */
     public Quiz storeQuiz( Quiz quiz) {
 
         // Prepare the values for all of the necessary columns in the table
@@ -157,6 +175,14 @@ public class QuizzesData {
         return quiz;
     }
 
+    /**
+     * Update the quiz in the database
+     *
+     * @param id
+     * @param date
+     * @param result
+     * @param questionsAnswered
+     */
     public void updateQuizByID(long id, String date, long result, long questionsAnswered) {
         String update = "UPDATE " + DBHelper.TABLE_QUIZZES
                 + " SET " + DBHelper.QUIZZES_COLUMN_DATE + "='" + date + "'"

@@ -35,11 +35,19 @@ public class QuizDoneFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     *
+     * @return new instance of the fragment
+     */
     public static QuizDoneFragment newInstance() {
         QuizDoneFragment fragment = new QuizDoneFragment();
         return fragment;
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +57,13 @@ public class QuizDoneFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,6 +71,11 @@ public class QuizDoneFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_quiz_done, container, false);
     }
 
+    /**
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
 
@@ -73,7 +93,15 @@ public class QuizDoneFragment extends Fragment {
         });
     }
 
+
     public class QuizDBUpdater extends AsyncTask<String, Void> {
+
+        /**
+         * Updates database with an asynchronous task
+         *
+         * @param time
+         * @return
+         */
         @Override
         protected Void doInBackground(String... time) {
             quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, time[0], QuizFragmentContainer.score, 6);
@@ -86,6 +114,10 @@ public class QuizDoneFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param outState
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -93,6 +125,10 @@ public class QuizDoneFragment extends Fragment {
         outState.putBoolean("alreadySetTime", alreadySetTime);
     }
 
+
+    /**
+     * Checks if the db is open and that there is a time assigned to the quiz
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -109,6 +145,9 @@ public class QuizDoneFragment extends Fragment {
         results.setText("Score: " + QuizFragmentContainer.score + "/6 " + "\nTime: " + time);
     }
 
+    /**
+     *
+     */
     @Override
     public void onPause() {
         super.onPause();

@@ -45,10 +45,11 @@ public class QuizFragment extends Fragment {
     private RadioButton radioButton3;
     private QuizzesData quizzesData;
 
-    public QuizFragment() {
-
-    }
-
+    /**
+     *
+     * @param questionNumber
+     * @return
+     */
     public static QuizFragment newInstance( int questionNumber ) {
         QuizFragment fragment = new QuizFragment();
         Bundle args = new Bundle();
@@ -57,6 +58,10 @@ public class QuizFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +77,13 @@ public class QuizFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState ){
@@ -79,6 +91,9 @@ public class QuizFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_quiz, container, false );
     }
 
+    /**
+     * Used to update score
+     */
     public void updateScore(){
         if (QuizFragmentContainer.userAnswers.get(questionNumber)
                 .equals(QuizFragmentContainer.the6Questions.get(questionNumber).getCapitalCity())) {
@@ -92,6 +107,9 @@ public class QuizFragment extends Fragment {
         }
     }
 
+    /**
+     * Opens the database (if closed) and runs function to show toast if correct or not correct
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -103,6 +121,9 @@ public class QuizFragment extends Fragment {
         }
     }
 
+    /**
+     * Closes database
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -113,6 +134,12 @@ public class QuizFragment extends Fragment {
     }
 
     public class QuizDBUpdater extends AsyncTask<Void, Void> {
+        /**
+         * Updates database with an asynchronous task
+         *
+         * @param arguments
+         * @return
+         */
         @Override
         protected Void doInBackground(Void... arguments) {
             quizzesData.updateQuizByID(QuizFragmentContainer.currentQuizID, "", QuizFragmentContainer.score, questionNumber);
@@ -125,6 +152,10 @@ public class QuizFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param outState
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -135,6 +166,11 @@ public class QuizFragment extends Fragment {
         outState.putBoolean("changedOrientation", true);
     }
 
+    /**
+     * Function for showing toast with message if the answer was correct or false
+     *
+     * @param questionNumber
+     */
     public void displayCorrectOrIncorrect(int questionNumber) {
         String text = "";
         if (questionNumber == 0) {
@@ -151,6 +187,12 @@ public class QuizFragment extends Fragment {
         firstTimeLoading = false;
     }
 
+    /**
+     * Sets the text and loads the radiobuttons into the screen. Also opens the database
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         super.onViewCreated( view, savedInstanceState );

@@ -36,18 +36,34 @@ public class StartFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Inflate the layout for this fragment
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_start, container, false);
     }
 
+    /**
+     *
+     * @param v
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View v, Bundle savedInstanceState) {
         Button reviewButton = v.findViewById( R.id.button );
@@ -60,8 +76,6 @@ public class StartFragment extends Fragment {
                 QuizFragmentContainer quizFragmentContainer = QuizFragmentContainer.newInstance();
                 fragmentTransaction.replace(R.id.fragmentContainerView, quizFragmentContainer).addToBackStack("main screen").commit();
 
-//                MainActivity mainActivity = (MainActivity) getActivity();
-//                mainActivity.quizButtonClick();
             }
         });
 
@@ -71,8 +85,6 @@ public class StartFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = getParentFragmentManager().beginTransaction();
                 ReviewQuizzesFragment reviewQuizzesFragment = ReviewQuizzesFragment.newInstance();
                 fragmentTransaction.replace(R.id.fragmentContainerView, reviewQuizzesFragment).addToBackStack("main screen").commit();
-//                MainActivity mainActivity = (MainActivity) getActivity();
-//                mainActivity.reviewButtonClick();
             }
         });
 
@@ -80,10 +92,13 @@ public class StartFragment extends Fragment {
         setUpInitialData();
     }
 
+    /**
+     * AsyncTask to check db and see if questions table is empty
+     */
     public void setUpInitialData() {
         if (questionsData != null) {
             questionsData.open();
-            new QuestionDBInitializer().execute(); // AsyncTask to check db and see if questions table is empty
+            new QuestionDBInitializer().execute();
         }
     }
 
@@ -104,16 +119,24 @@ public class StartFragment extends Fragment {
     }
 
     public class QuestionDBWriter extends AsyncTask<Question, Question> {
-
-        // This method will run as a background process to write into db.
+        /**
+         * This method will run as a background process to write into db.
+         *
+         * @param questions
+         * @return
+         */
         @Override
         protected Question doInBackground( Question... questions ) {
             questionsData.storeQuestion(questions[0]);
             return questions[0];
         }
 
-        // This method will be automatically called by Android once the writing to the database
-        // in a background process has finished.
+        /**
+         * This method will be automatically called by Android once the writing to the database
+         * in a background process has finished.
+         *
+         * @param question
+         */
         @Override
         protected void onPostExecute( Question question ) {
 

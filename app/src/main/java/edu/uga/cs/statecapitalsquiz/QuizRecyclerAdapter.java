@@ -16,12 +16,26 @@ public class QuizRecyclerAdapter extends RecyclerView.Adapter<QuizRecyclerAdapte
     private final Context context;
     private List<Quiz> values;
 
+    /**
+     *
+     * @param context
+     * @param pastQuizzes
+     */
     public QuizRecyclerAdapter(Context context, List<Quiz> pastQuizzes) {
         this.context = context;
         this.values = pastQuizzes;
     }
 
 
+    /**
+     * We need to make sure that all CardViews have the same, full width, allowed by the parent view.
+     * This is a bit tricky, and we must provide the parent reference (the second param of inflate)
+     * Consequently, the parent view's (the RecyclerView) width will be used (match_parent).
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public QuizRecyclerAdapter.QuizHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -29,6 +43,13 @@ public class QuizRecyclerAdapter extends RecyclerView.Adapter<QuizRecyclerAdapte
         return new QuizHolder( view );
     }
 
+    /**
+     * This method fills in the values of a holder to show a Quiz.
+     * The position parameter indicates the position on the list of quizlist.
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull QuizRecyclerAdapter.QuizHolder holder, int position) {
         Quiz quiz = values.get( position );
@@ -37,6 +58,10 @@ public class QuizRecyclerAdapter extends RecyclerView.Adapter<QuizRecyclerAdapte
         holder.date.setText( "Date: " + quiz.getDate() );
     }
 
+    /**
+     *
+     * @return size of variable values
+     */
     @Override
     public int getItemCount() {
         if( values != null )
@@ -45,6 +70,9 @@ public class QuizRecyclerAdapter extends RecyclerView.Adapter<QuizRecyclerAdapte
             return 0;
     }
 
+    /**
+     * The adapter must have a ViewHolder class to "hold" one item to show.
+     */
     public static class QuizHolder extends RecyclerView.ViewHolder {
 
         TextView score;

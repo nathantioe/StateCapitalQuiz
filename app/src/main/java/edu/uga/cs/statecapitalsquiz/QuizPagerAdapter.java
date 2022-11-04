@@ -15,11 +15,22 @@ import java.util.Arrays;
 
 public class QuizPagerAdapter extends FragmentStateAdapter {
 
+    /**
+     *
+     * @param fragmentManager
+     * @param lifecycle
+     */
     public QuizPagerAdapter(FragmentManager fragmentManager,
                             Lifecycle lifecycle){
         super( fragmentManager, lifecycle );
     }
 
+    /**
+     * Creates the QuizDoneFragment at position 6 in the pager
+     *
+     * @param position
+     * @return
+     */
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -32,7 +43,10 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
     }
 
 
-
+    /**
+     *
+     * @return no of items in the pager
+     */
     @Override
     public int getItemCount() {
         return 7;

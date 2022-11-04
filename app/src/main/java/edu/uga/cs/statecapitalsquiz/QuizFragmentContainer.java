@@ -44,11 +44,19 @@ public class QuizFragmentContainer extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     *
+     * @return
+     */
     public static QuizFragmentContainer newInstance() {
         QuizFragmentContainer fragment = new QuizFragmentContainer();
         return fragment;
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +68,13 @@ public class QuizFragmentContainer extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,6 +82,13 @@ public class QuizFragmentContainer extends Fragment {
         return inflater.inflate(R.layout.fragment_quiz_container, container, false);
     }
 
+    /**
+     * Opens the database and assignes adapter, resets the quiz and answers if a new quiz should
+     * be created
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         questionsData = new QuestionsData(getActivity());
@@ -86,6 +108,10 @@ public class QuizFragmentContainer extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -97,10 +123,13 @@ public class QuizFragmentContainer extends Fragment {
 
     /** ADDED FUNCTIONS BELOW by Nathan */
 
+    /**
+     * Opens the database if its closed
+     */
     @Override
     public void onResume() {
         super.onResume();
-        if(questionsData != null && !questionsData.isDBOpen()) {
+        if(questionsData != null && !questionsData.isDBOpen()) { //Is there a reason to having 2 of theese?
             questionsData.open();
         }
         if(quizzesData != null && !quizzesData.isDBOpen()) {
@@ -116,11 +145,22 @@ public class QuizFragmentContainer extends Fragment {
     /** AsyncTask for reading Questions from DB */
     public class QuizQuestionGenerator extends AsyncTask<Void, ArrayList<Question>> {
 
+        /**
+         * Returns six random questions in arraylist
+         *
+         * @param params
+         * @return
+         */
         @Override
         protected ArrayList<Question> doInBackground( Void... params ) {
             return questionsData.generate6QuizQuestions();
         }
 
+        /**
+         * Adds quiz to database and sets adapter
+         *
+         * @param generatedQuestions
+         */
         @Override
         protected void onPostExecute( ArrayList<Question> generatedQuestions ) {
             addQuizToDB(generatedQuestions);
@@ -133,6 +173,9 @@ public class QuizFragmentContainer extends Fragment {
         }
     }
 
+    /**
+     * Clears variables for new quiz
+     */
     public static void setUpQuiz() {
         the6Questions.clear();
         userAnswers.clear();
@@ -143,6 +186,11 @@ public class QuizFragmentContainer extends Fragment {
 
     }
 
+    /**
+     * Writes new quiz to database?????
+     *
+     * @param questionList
+     */
     public void addQuizToDB(ArrayList<Question> questionList) {
         Quiz quiz = new Quiz("", // empty date
                 questionList.get(0).getId(), // q1
@@ -156,10 +204,19 @@ public class QuizFragmentContainer extends Fragment {
         new QuizDBWriter().execute(quiz);
     }
 
-    /** AsyncTask for creating Quiz row in Quiz table */
+    /**
+     * AsyncTask for creating Quiz row in Quiz table
+     */
     public class QuizDBWriter extends AsyncTask<Quiz, Quiz> {
 
-        // store quiz in db
+
+
+        /**
+         * store quiz in database
+         *
+         * @param quizzes
+         * @return
+         */
         @Override
         protected Quiz doInBackground( Quiz... quizzes ) {
             return quizzesData.storeQuiz( quizzes[0] );

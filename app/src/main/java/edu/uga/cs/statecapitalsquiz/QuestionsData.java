@@ -26,17 +26,27 @@ public class QuestionsData {
             DBHelper.QUESTIONS_COLUMN_THIRDCITY
     };
 
+    /**
+     * Assigns the dbHelper variable, so that we can use it later. Makes sure that there is
+     * only one instance of the helper.
+     *
+     * @param context
+     */
     public QuestionsData( Context context ) {
         this.dbHelper = DBHelper.getInstance( context );
     }
 
-    // Open the database
+    /**
+     * Open the database
+     */
     public void open() {
         db = dbHelper.getWritableDatabase();
         Log.d( DEBUG_TAG, "QuestionsData: db open" );
     }
 
-    // Close the database
+    /**
+     * Close the database
+     */
     public void close() {
         if( dbHelper != null ) {
             dbHelper.close();
@@ -44,6 +54,11 @@ public class QuestionsData {
         }
     }
 
+    /**
+     * Checks if the database is empty
+     *
+     * @return Boolean
+     */
     public boolean isEmpty() {
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBHelper.TABLE_QUESTIONS, null);
         if(cursor != null) {
@@ -57,14 +72,23 @@ public class QuestionsData {
         return true;
     }
 
+    /**
+     * Checks if the database is open
+     *
+     * @return Boolean
+     */
     public boolean isDBOpen()
     {
         return db.isOpen();
     }
 
-    // Retrieve all questions and return them as a List.
-    // This is how we restore persistent objects stored as rows in the job leads table in the database.
-    // For each retrieved row, we create a new Question (Java POJO object) instance and add it to the list.
+    /**
+     * Retrieve all questions and return them as a List.
+     * This is how we restore persistent objects stored as rows in the job leads table in the database.
+     * For each retrieved row, we create a new Question (Java POJO object) instance and add it to the list.
+     *
+     * @return ArrayList<Question>
+     */
     public ArrayList<Question> retrieveAllQuestions() {
         ArrayList<Question> questions = new ArrayList<>();
         Cursor cursor = null;
@@ -121,6 +145,11 @@ public class QuestionsData {
         return questions;
     }
 
+    /**
+     * Shuffles the questions and returns six of them, cannot do duplicates.
+     *
+     * @return ArrayList<Question>
+     */
     public ArrayList<Question> generate6QuizQuestions() {
         ArrayList<Question> allQuestions = retrieveAllQuestions();
         Collections.shuffle(allQuestions);
@@ -131,6 +160,11 @@ public class QuestionsData {
         return list;
     }
 
+    /**
+     * Insert new question into the databse
+     *
+     * @param question
+     */
     public void storeQuestion(Question question) {
         ContentValues values = new ContentValues();
         values.put(DBHelper.QUESTIONS_COLUMN_STATENAME, question.getStateName());

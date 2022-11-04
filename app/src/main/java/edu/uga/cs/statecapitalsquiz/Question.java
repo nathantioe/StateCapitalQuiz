@@ -26,6 +26,14 @@ public class Question implements Parcelable {
         this.thirdCity = null;
     }
 
+    /**
+     *
+     *
+     * @param stateName
+     * @param capitalCity
+     * @param secondCity
+     * @param thirdCity
+     */
     public Question( String stateName, String capitalCity, String secondCity, String thirdCity ) {
         this.id = -1;  // the primary key id will be set by a setter method
         this.stateName = stateName;
@@ -34,6 +42,10 @@ public class Question implements Parcelable {
         this.thirdCity = thirdCity;
     }
 
+    /**
+     *
+     * @param in
+     */
     protected Question(Parcel in) {
         id = in.readLong();
         stateName = in.readString();
@@ -43,11 +55,23 @@ public class Question implements Parcelable {
     }
 
     public static final Creator<Question> CREATOR = new Creator<Question>() {
+        /**
+         * Creating a new instance of the Parcelable class
+         *
+         * @param in
+         * @return
+         */
         @Override
         public Question createFromParcel(Parcel in) {
             return new Question(in);
         }
 
+        /**
+         * Create a new array of the Parcelable class.
+         *
+         * @param size
+         * @return
+         */
         @Override
         public Question[] newArray(int size) {
             return new Question[size];
@@ -114,6 +138,12 @@ public class Question implements Parcelable {
         return 0;
     }
 
+    /**
+     *
+     *
+     * @param parcel The Parcel in which the object should be written
+     * @param i Additional flags about how the object should be written
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeLong(id);

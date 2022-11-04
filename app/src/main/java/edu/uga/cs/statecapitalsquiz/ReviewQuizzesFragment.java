@@ -30,19 +30,33 @@ public class ReviewQuizzesFragment extends Fragment {
     private QuizzesData quizzesData;
 
     public ReviewQuizzesFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     *
+     * @return Fragment
+     */
     public static ReviewQuizzesFragment newInstance() {
         ReviewQuizzesFragment fragment = new ReviewQuizzesFragment();
         return fragment;
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,6 +64,11 @@ public class ReviewQuizzesFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_review_quizzes, container, false);
     }
 
+    /**
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState ) {
         super.onViewCreated( view, savedInstanceState );
@@ -66,7 +85,9 @@ public class ReviewQuizzesFragment extends Fragment {
 
     /** New functions added by Nathan **/
 
-    // AsyncTask to retrieve all quizzes from db
+    /**
+     * AsyncTask to retrieve all quizzes from db
+     */
     public class QuizDBReader extends AsyncTask<Void, List<Quiz>> {
 
         @Override
@@ -75,7 +96,11 @@ public class ReviewQuizzesFragment extends Fragment {
             return allQuizzes;
         }
 
-        // after retrieving quizzes, add them to the quiz list
+        /**
+         * after retrieving quizzes, add them to the quiz list
+         *
+         * @param allQuizzes
+         */
         @Override
         protected void onPostExecute(List<Quiz> allQuizzes) {
             quizList.addAll(allQuizzes);
