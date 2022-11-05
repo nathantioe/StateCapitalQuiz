@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class facilitates in retrieving questions from the db.
+ */
 public class QuestionsData {
 
     public static final String DEBUG_TAG = "QuestionsData";

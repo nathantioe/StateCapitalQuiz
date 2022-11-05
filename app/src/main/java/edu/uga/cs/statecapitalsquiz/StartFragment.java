@@ -19,9 +19,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link StartFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment responsible for showing the starting screen of the app.
  */
 public class StartFragment extends Fragment {
 

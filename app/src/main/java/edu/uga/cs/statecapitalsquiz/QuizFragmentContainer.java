@@ -24,9 +24,8 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link QuizFragmentContainer#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment that stores the Quiz data, including quiz questions, the current
+ * quiz ID, the score, etc...
  */
 public class QuizFragmentContainer extends Fragment {
 
@@ -83,7 +82,7 @@ public class QuizFragmentContainer extends Fragment {
     }
 
     /**
-     * Opens the database and assignes adapter, resets the quiz and answers if a new quiz should
+     * Opens the database and assigns adapter, resets the quiz and answers if a new quiz should
      * be created
      *
      * @param view
@@ -120,8 +119,6 @@ public class QuizFragmentContainer extends Fragment {
         savedInstanceState.putInt("score", score);
         savedInstanceState.putLong("currentQuizID", currentQuizID);
     }
-
-    /** ADDED FUNCTIONS BELOW by Nathan */
 
     /**
      * Opens the database if its closed
@@ -187,7 +184,7 @@ public class QuizFragmentContainer extends Fragment {
     }
 
     /**
-     * Writes new quiz to database?????
+     * Writes new quiz to database
      *
      * @param questionList
      */

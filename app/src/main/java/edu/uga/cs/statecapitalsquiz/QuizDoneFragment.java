@@ -20,9 +20,8 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link QuizDoneFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment that appears when the user finishes the quiz.
+ * Displays to the user his/her results.
  */
 public class QuizDoneFragment extends Fragment {
 
@@ -146,7 +145,7 @@ public class QuizDoneFragment extends Fragment {
     }
 
     /**
-     *
+     * Closes db
      */
     @Override
     public void onPause() {

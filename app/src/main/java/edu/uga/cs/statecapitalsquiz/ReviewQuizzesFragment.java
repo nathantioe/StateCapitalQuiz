@@ -18,9 +18,8 @@ import java.util.List;
 import kotlin.collections.ArrayDeque;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link ReviewQuizzesFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * This fragment is responsible for the review page. Displays
+ * past quizzes.
  */
 public class ReviewQuizzesFragment extends Fragment {
 

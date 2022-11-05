@@ -28,6 +28,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 
+/**
+ * Fragment that is responsible for the individual quiz questions that
+ * the user can interact with
+ */
 public class QuizFragment extends Fragment {
 
     private boolean changedOrientation = false;

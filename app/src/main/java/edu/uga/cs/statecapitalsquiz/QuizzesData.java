@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is facilitates storing and restoring quizzes stored.
+ * This class facilitates in storing and retrieving quizzes stored.
  */
 public class QuizzesData {
 

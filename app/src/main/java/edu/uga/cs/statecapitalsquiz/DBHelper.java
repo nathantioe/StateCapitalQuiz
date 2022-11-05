@@ -5,6 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * Class that defines constants that help manage the database. Referenced often in
+ * QuestionsData.java and QuizzesData.java
+ */
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DEBUG_TAG = "QuestionsDBHelper";
